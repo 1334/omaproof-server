@@ -46,6 +46,7 @@ type AuthObject {
   securityQuestions: String!
   securityAnswers: String!
   user: User! @relation(name: "AuthenticationRelation")
+  token: String
 }
 
 type Post {

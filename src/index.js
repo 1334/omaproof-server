@@ -1,12 +1,10 @@
+require('dotenv').config();
 const { GraphQLServer } = require('graphql-yoga');
 const { Prisma } = require('prisma-binding');
-
-require('dotenv').config();
+const Mutation = require('./resolvers/Mutation');
 
 const resolvers = {
-  Query: {
-    info: () => `This is the API`
-  }
+  Mutation
 };
 
 // 3
@@ -23,4 +21,4 @@ const server = new GraphQLServer({
     })
   })
 });
-server.start(() => console.log(`Server is running on http://localhost:4000`)); // eslint-disable-line
+server.start(() => console.log(`server is running`)); // eslint-disable-line

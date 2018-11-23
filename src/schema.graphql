@@ -1,15 +1,47 @@
+# import Group from "./generated/prisma.graphql"
+# import Settings from "./generated/prisma.graphql"
+# import MetaData from "./generated/prisma.graphql"
+# import User from "./generated/prisma.graphql"
+# import Post from "./generated/prisma.graphql"
+# import Comment from "./generated/prisma.graphql"
+# import Tag from "./generated/prisma.graphql"
+# import Content from "./generated/prisma.graphql"
+# import CONTENT_TYPE from "./generated/prisma.graphql"
+
+type AuthObject {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contactNumber: String!
+  email: String
+  securityQuestions: String!
+  user: User!
+  token: String
+}
+
 type Query {
-  info: String!
+  dummy: String
 }
 
-type Content {
-  id: ID! @unique
-  contentType: String
-  description: String
-  media: String
-  published: Boolean! @default(value: "true")
+input MetaDataCreateInput {
+  name: String!
+  profilePicture: String
+  age: Int
+  generation: Int
 }
 
-type Settings {
-  id: ID! @unique
+input SignUpCreation {
+  metaData: MetaDataCreateInput
+  signUpAuthentication: SignUpAuthentication
+}
+
+input SignUpAuthentication {
+  contactNumber: String!
+  email: String
+  securityQuestions: String
+  securityAnswers: String!
+}
+
+type Mutation {
+  createUser(data: SignUpCreation!): User
 }
