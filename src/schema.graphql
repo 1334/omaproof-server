@@ -3,7 +3,13 @@ type Query {
 }
 
 type Content {
+  id: ID! @unique
   contentType: String
   description: String
   media: String
+  published: Boolean! @default(value: "true")
+}
+
+type Settings {
+  id: ID! @unique
 }

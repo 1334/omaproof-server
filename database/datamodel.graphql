@@ -1,0 +1,74 @@
+type Group {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime
+  settings: Settings!
+  users: [User]
+  posts: [Post]
+  admin: User!
+}
+
+type Settings {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  colorScheme: String!
+  welcomeText: String!
+  description: String
+}
+
+type User {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime
+  metaData: String
+  authData: AuthObject!
+  posts: [Post]
+  comments: [Comment]
+  groups: [Group]
+}
+
+type AuthObject {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime
+  contactNumber: String! @unique
+  securityQuestions: [String!]!
+  securityAnswers: [String!]!
+}
+
+type Post {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime
+  content: Content!
+  user: User!
+  tags: [Tag]
+  comments: [Comment]
+}
+
+type Comment {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime
+  content: Content!
+  user: User
+  post: Post
+}
+
+type Tag {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  users: [User]!
+}
+
+type Content {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contentType: String!
+  description: String!
+  media: String
+  published: Boolean! @default(value: "true")
+}
