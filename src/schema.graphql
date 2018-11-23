@@ -1,0 +1,9 @@
+type Query {
+  info: String!
+}
+
+type Content {
+  contentType: String
+  description: String
+  media: String
+}
