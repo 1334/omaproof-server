@@ -22,7 +22,10 @@
     "prettier": "^1.15.2"
   },
   "dependencies": {
+    "binding": "^3.0.3",
+    "dotenv": "^6.1.0",
     "graphql": "^14.0.2",
-    "graphql-yoga": "^1.16.7"
+    "graphql-yoga": "^1.16.7",
+    "prisma": "^1.21.0"
   }
 }

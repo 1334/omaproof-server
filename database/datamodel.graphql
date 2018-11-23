@@ -1,11 +1,11 @@
 type Group {
   id: ID! @unique
   createdAt: DateTime!
-  updatedAt: DateTime
-  settings: Settings!
-  users: [User]
-  posts: [Post]
-  admin: User!
+  updatedAt: DateTime!
+  settings: Settings! @relation(name: "SettingsRelation", onDelete: CASCADE)
+  users: [User] @relation(name: "GroupMembership")
+  posts: [Post] @relation(name: "GroupPosts", onDelete: CASCADE)
+  admin: User! @relation(name: "AdminRegistration")
 }
 
 type Settings {
@@ -15,45 +15,57 @@ type Settings {
   colorScheme: String!
   welcomeText: String!
   description: String
+  group: Group! @relation(name: "SettingsRelation")
 }
 
 type User {
   id: ID! @unique
   createdAt: DateTime!
-  updatedAt: DateTime
-  metaData: String
+  updatedAt: DateTime!
+  metaData: MetaData
   authData: AuthObject!
+    @relation(name: "AuthenticationRelation", onDelete: CASCADE)
   posts: [Post]
   comments: [Comment]
-  groups: [Group]
+  groups: [Group] @relation(name: "GroupMembership")
+}
+
+type MetaData {
+  name: String!
+  profilePicture: String
+  age: Int
+  generation: Int
 }
 
 type AuthObject {
   id: ID! @unique
   createdAt: DateTime!
-  updatedAt: DateTime
+  updatedAt: DateTime!
   contactNumber: String! @unique
-  securityQuestions: [String!]!
-  securityAnswers: [String!]!
+  email: String @unique
+  securityQuestions: String!
+  securityAnswers: String!
+  user: User! @relation(name: "AuthenticationRelation")
 }
 
 type Post {
   id: ID! @unique
   createdAt: DateTime!
-  updatedAt: DateTime
+  updatedAt: DateTime!
   content: Content!
   user: User!
   tags: [Tag]
-  comments: [Comment]
+  group: Group! @relation(name: "GroupPosts")
+  comments: [Comment] @relation(name: "CommentRelation", onDelete: CASCADE)
 }
 
 type Comment {
   id: ID! @unique
   createdAt: DateTime!
-  updatedAt: DateTime
+  updatedAt: DateTime!
   content: Content!
-  user: User
-  post: Post
+  user: User!
+  post: Post! @relation(name: "CommentRelation")
 }
 
 type Tag {
@@ -67,8 +79,15 @@ type Content {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  contentType: String!
+  contentType: CONTENT_TYPE!
   description: String!
-  media: String
+  mediaUrl: String
   published: Boolean! @default(value: "true")
+}
+
+enum CONTENT_TYPE {
+  NO_MEDIA
+  IMAGE
+  GIF
+  MOVIE
 }
