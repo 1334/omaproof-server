@@ -80,8 +80,51 @@ async function createGroup(parent, args, context, info) {
   return group;
 }
 
+async function createPost(parent, args, context, info) {
+  const options = {};
+  options.group = { connect: { id: args.groupId } };
+  options.user = { connect: { contactNumber: args.contactNumber } };
+  if (args.tags_contactNumbers) {
+    const arrayUsers = args.tags_contactNumbers.map(contactNumber => {
+      return { user: { connect: { contactNumber: contactNumber } } };
+    });
+    options.tags = { create: arrayUsers };
+  }
+
+  return await context.db.mutation.createPost(
+    {
+      data: {
+        ...args.content,
+        ...options
+      }
+    },
+    info
+  );
+}
+
+async function createTag(parent, args, context, info) {
+  const link = {};
+  args.isPost
+    ? (link.link_post = { connect: { id: args.contentId } })
+    : (link.link_comment = { connect: { id: args.contentId } });
+  return await context.db.mutation.createTag(
+    {
+      data: {
+        user: { connect: { contactNumber: args.contactNumber } },
+        ...link
+      }
+    },
+    info
+  );
+}
+
+// async function createComment(parent, args, context, info) {}
+
 module.exports = {
   createUser,
   login,
-  createGroup
+  createGroup,
+  createPost,
+  createTag
+  //createComment
 };

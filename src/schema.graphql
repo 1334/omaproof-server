@@ -53,8 +53,28 @@ input GroupCreation {
   description: String!
 }
 
+input ContentCreation {
+  contentType: CONTENT_TYPE!
+  description: String!
+  mediaUrl: String
+  published: Boolean
+}
+
 type Mutation {
   createUser(data: SignUp!): AuthPayload
   login(contactNumber: String!, securityAnswers: String!): AuthPayload
   createGroup(data: GroupCreation!): Group
+  createTag(contactNumber: String!, contentId: String!, isPost: Boolean!): Tag
+  createPost(
+    contactNumber: String!
+    groupId: String!
+    content: ContentCreation!
+    tags_contactNumbers: [String]
+  ): Post
+  createComment(
+    contactNumber: String!
+    postId: String!
+    content: ContentCreation!
+    tags_contactNumbers: [String]
+  ): Comment
 }
