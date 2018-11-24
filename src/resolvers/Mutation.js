@@ -85,12 +85,8 @@ async function createPost(parent, args, context, info) {
   options.group = { connect: { id: args.groupId } };
   options.user = { connect: { contactNumber: args.contactNumber } };
   if (args.tags_contactNumbers) {
-    const arrayUsers = args.tags_contactNumbers.map(contactNumber => {
-      return { user: { connect: { contactNumber: contactNumber } } };
-    });
-    options.tags = { create: arrayUsers };
+    options.tags = _createTags(args.tags_contactNumbers);
   }
-
   return await context.db.mutation.createPost(
     {
       data: {
@@ -118,13 +114,36 @@ async function createTag(parent, args, context, info) {
   );
 }
 
-// async function createComment(parent, args, context, info) {}
+async function createComment(parent, args, context, info) {
+  const options = {};
+  options.post = { connect: { id: args.postId } };
+  options.user = { connect: { contactNumber: args.contactNumber } };
+  if (args.tags_contactNumbers) {
+    options.tags = _createTags(args.tags_contactNumbers);
+  }
+  return await context.db.mutation.createComment(
+    {
+      data: {
+        ...args.content,
+        ...options
+      }
+    },
+    info
+  );
+}
+
+function _createTags(tags_contactNumbers) {
+  const arr = tags_contactNumbers.map(contactNumber => {
+    return { user: { connect: { contactNumber: contactNumber } } };
+  });
+  return { create: arr };
+}
 
 module.exports = {
   createUser,
   login,
   createGroup,
   createPost,
-  createTag
-  //createComment
+  createTag,
+  createComment
 };
