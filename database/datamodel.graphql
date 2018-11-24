@@ -2,50 +2,29 @@ type Group {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  settings: Settings! @relation(name: "SettingsRelation", onDelete: CASCADE)
   users: [User] @relation(name: "GroupMembership")
   posts: [Post] @relation(name: "GroupPosts", onDelete: CASCADE)
   admin: User! @relation(name: "AdminRegistration")
-}
-
-type Settings {
-  id: ID! @unique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  colorScheme: String!
+  colorScheme: String
   welcomeText: String!
   description: String
-  group: Group! @relation(name: "SettingsRelation")
 }
 
 type User {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  metaData: MetaData
-  authData: AuthObject!
-    @relation(name: "AuthenticationRelation", onDelete: CASCADE)
-  posts: [Post]
-  comments: [Comment]
-  groups: [Group] @relation(name: "GroupMembership")
-}
-
-type MetaData {
   name: String!
   profilePicture: String
   age: Int
   generation: Int
-}
-
-type AuthObject {
-  id: ID! @unique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  contactNumber: String! @unique
+  posts: [Post]
+  comments: [Comment]
+  groups: [Group] @relation(name: "GroupMembership")
   email: String @unique
   securityQuestions: String!
   securityAnswers: String!
-  user: User! @relation(name: "AuthenticationRelation")
+  contactNumber: String! @unique
   token: String
 }
 
@@ -53,9 +32,12 @@ type Post {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  content: Content!
   user: User!
   tags: [Tag]
+  contentType: CONTENT_TYPE!
+  description: String!
+  mediaUrl: String
+  published: Boolean! @default(value: "true")
   group: Group! @relation(name: "GroupPosts")
   comments: [Comment] @relation(name: "CommentRelation", onDelete: CASCADE)
 }
@@ -64,8 +46,12 @@ type Comment {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  content: Content!
+  contentType: CONTENT_TYPE!
+  description: String!
+  mediaUrl: String
+  published: Boolean! @default(value: "true")
   user: User!
+  tags: [Tag]
   post: Post! @relation(name: "CommentRelation")
 }
 
@@ -73,17 +59,9 @@ type Tag {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  users: [User]!
-}
-
-type Content {
-  id: ID! @unique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  contentType: CONTENT_TYPE!
-  description: String!
-  mediaUrl: String
-  published: Boolean! @default(value: "true")
+  link_post: Post
+  link_comment: Comment
+  user: User!
 }
 
 enum CONTENT_TYPE {

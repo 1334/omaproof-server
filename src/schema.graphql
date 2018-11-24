@@ -8,40 +8,53 @@
 # import Content from "./generated/prisma.graphql"
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
-type AuthObject {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  contactNumber: String!
-  email: String
-  securityQuestions: String!
-  user: User!
-  token: String
-}
-
 type Query {
   dummy: String
 }
 
-input MetaDataCreateInput {
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   profilePicture: String
   age: Int
   generation: Int
-}
-
-input SignUpCreation {
-  metaData: MetaDataCreateInput
-  signUpAuthentication: SignUpAuthentication
-}
-
-input SignUpAuthentication {
-  contactNumber: String!
+  posts: [Post]
+  comments: [Comment]
+  groups: [Group]
   email: String
-  securityQuestions: String
+  securityQuestions: String!
+  contactNumber: String!
+}
+
+input SignUp {
+  name: String!
+  profilePicture: String
+  age: Int
+  generation: Int
+  groups_IDs: [String]
+  email: String
+  securityQuestions: String!
   securityAnswers: String!
+  contactNumber: String!
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+input GroupCreation {
+  welcomeText: String!
+  admin_contactNumber: String!
+  users_contactNumbers: [String]
+  colorScheme: String!
+  description: String!
 }
 
 type Mutation {
-  createUser(data: SignUpCreation!): User
+  createUser(data: SignUp!): AuthPayload
+  login(contactNumber: String!, securityAnswers: String!): AuthPayload
+  createGroup(data: GroupCreation!): Group
 }
