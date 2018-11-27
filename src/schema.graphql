@@ -9,26 +9,58 @@
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
 type Query {
-  getGroups(where: SearchInput!): [Group]
-  getUsers(where: SearchInput!): [User]
-  getPosts(where: SearchInput!): [Post]
-  getComments(where: SearchInput!): [Comment]
-  getTags(where: SearchInput!): [Tag]
+  getGroups(where: GroupSearchInput!): [Group]
+  getUsers(where: UsersSearchInput!): [User]
+  getPosts(where: PostsSearchInput!): [Post]
+  getComments(where: CommentsSearchInput!): [Comment]
+  getTags(where: InputTagSearch!): [Tag]
 }
 
-input SearchInput {
-  user: InputId
-  users_some: InputId
-  group: InputId
-  groups_some: InputId
-  post: InputId
+input GroupSearchInput {
+  id: String
+  users_some: InputUserUnique
   posts_some: InputId
+  admin: InputUserUnique
+}
+
+input UsersSearchInput {
+  id: String
+  contactNumber: String
+  email: String
+  posts_some: InputId
+  groups_some: InputId
+  comments_some: InputId
+}
+
+input PostsSearchInput {
+  id: String
+  group: InputId
+  comments_some: InputId
+  user: InputUserUnique
+  tags_some: InputId
+  published: Boolean
+}
+
+input CommentsSearchInput {
+  id: String
+  user: InputUserUnique
+  tags_some: InputId
+  post: InputId
+  published: Boolean
+}
+
+input InputTagSearch {
+  id: String
   link_post: InputId
   link_comment: InputId
-  admin: InputId
+  user: InputUserUnique
 }
 
 input InputId {
+  id: String
+}
+
+input InputUserUnique {
   id: String
   contactNumber: String
   email: String
