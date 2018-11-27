@@ -33,7 +33,7 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
-  tags: [Tag]
+  tags: [Tag] @relation(name: "PostTagRelation", onDelete: CASCADE)
   contentType: CONTENT_TYPE!
   description: String!
   mediaUrl: String
@@ -51,7 +51,7 @@ type Comment {
   mediaUrl: String
   published: Boolean! @default(value: "true")
   user: User!
-  tags: [Tag]
+  tags: [Tag] @relation(name: "CommentTagRelation", onDelete: CASCADE)
   post: Post! @relation(name: "CommentRelation")
 }
 
@@ -59,8 +59,8 @@ type Tag {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  link_post: Post
-  link_comment: Comment
+  link_post: Post @relation(name: "PostTagRelation")
+  link_comment: Comment @relation(name: "CommentTagRelation")
   user: User!
 }
 

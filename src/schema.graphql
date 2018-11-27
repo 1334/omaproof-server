@@ -9,7 +9,29 @@
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
 type Query {
-  dummy: String
+  getGroups(where: SearchInput!): [Group]
+  getUsers(where: SearchInput!): [User]
+  getPosts(where: SearchInput!): [Post]
+  getComments(where: SearchInput!): [Comment]
+  getTags(where: SearchInput!): [Tag]
+}
+
+input SearchInput {
+  user: InputId
+  users_some: InputId
+  group: InputId
+  groups_some: InputId
+  post: InputId
+  posts_some: InputId
+  link_post: InputId
+  link_comment: InputId
+  admin: InputId
+}
+
+input InputId {
+  id: String
+  contactNumber: String
+  email: String
 }
 
 type User {
@@ -33,7 +55,7 @@ input SignUp {
   profilePicture: String
   age: Int
   generation: Int
-  groups_IDs: [String]
+  groups: [String]
   email: String
   securityQuestions: String!
   securityAnswers: String!
@@ -77,4 +99,8 @@ type Mutation {
     content: ContentCreation!
     tags_contactNumbers: [String]
   ): Comment
+  deletePost(id: String!): Post
+  deleteComment(id: String!): Comment
+  deleteTag(id: String!): Tag
+  deleteUser(id: String!): User
 }

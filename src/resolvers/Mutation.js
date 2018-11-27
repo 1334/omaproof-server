@@ -5,7 +5,14 @@ async function _createUser(context, signUpObject) {
   return context.db.mutation.createUser(
     {
       data: {
-        ...signUpObject
+        ...signUpObject,
+        groups: signUpObject.groups.slice().map(group => {
+          return {
+            connect: {
+              id: group
+            }
+          };
+        })
       }
     },
     `{id}`
@@ -139,11 +146,63 @@ function _createTags(tags_contactNumbers) {
   return { create: arr };
 }
 
+async function deletePost(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deletePost(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
+async function deleteComment(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deleteComment(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
+async function deleteTag(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deleteTag(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
+async function deleteUser(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deleteUser(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
 module.exports = {
   createUser,
   login,
   createGroup,
   createPost,
   createTag,
-  createComment
+  createComment,
+  deletePost,
+  deleteComment,
+  deleteTag,
+  deleteUser
 };
