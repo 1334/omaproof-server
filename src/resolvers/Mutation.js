@@ -1,83 +1,110 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const uuidv4 = require('uuid/v4');
 
-async function _createUser(context, signUpObject) {
-  return context.db.mutation.createUser(
+async function createUser(root, args, context) {
+  // auto generate password:
+  args.data.password = uuidv4();
+  const user = await context.db.mutation.createUser(
     {
       data: {
-        ...signUpObject
+        ...args.data
       }
     },
     `{id}`
   );
-}
-
-async function createUser(root, args, context, info, callback = _createUser) {
-  const signUpObject = args.data;
-  if (!signUpObject.securityQuestions)
-    signUpObject.securityQuestions = 'Password';
-  try {
-    signUpObject.securityAnswers = await bcrypt.hash(
-      signUpObject.securityAnswers,
-      10
-    );
-  } catch (error) {
-    throw new Error('Invalid security answers');
-  }
-  const user = await callback(context, signUpObject);
-  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+  const token = jwt.sign(
+    { userId: user.id, activeGroup: null },
+    process.env.APP_SECRET
+  );
   return {
     token,
     user
   };
 }
 
-async function _getAuthObject(context, contactNumber) {
-  return context.db.query.user(
-    { where: { contactNumber: contactNumber } },
-    `{id securityAnswers}`
+async function login(root, args, context) {
+  const user = await context.db.query.user(
+    { where: { contactNumber: args.contactNumber } },
+    `{id password groups}`
   );
-}
-
-async function login(root, args, context, info, callback = _getAuthObject) {
-  const user = await callback(context, args.contactNumber);
   if (!user) throw new Error('User not found');
-  const valid = await bcrypt.compare(
-    args.securityAnswers,
-    user.securityAnswers
-  );
+  const valid = args.password === user.password;
   if (!valid) throw new Error('Incorrect password');
-  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+  const token = jwt.sign(
+    { userId: user.id, activeGroup: null },
+    process.env.APP_SECRET
+  );
   return {
     token,
     user
   };
 }
 
-async function createGroup(parent, args, context, info) {
-  let users = [];
-  let admin = { contactNumber: args.data.admin_contactNumber };
-  const { colorScheme, welcomeText, description } = args.data;
-  if (args.data.users_contactNumbers) {
-    users = args.data.users_contactNumbers.map(contactNumber => {
-      return { contactNumber: contactNumber };
-    });
+async function selectGroup(parent, args, context) {
+  const user = await context.db.query.user(
+    { where: { Id: context.userId } },
+    `{id password groups}`
+  );
+  if (user.groups.indexOf(args.groupId) <= -1) {
+    throw new Error('GroupId not available for user');
+  } else {
+    const token = jwt.sign(
+      {
+        userId: context.userId,
+        activeGroup: args.groupId
+      },
+      process.env.APP_SECRET
+    );
+    return {
+      token,
+      user
+    };
   }
+}
+
+async function createGroup(parent, args, context) {
+  const newUserContactNumbers = [];
+  const oldUserContactNumbers = [];
+  const admin = { id: context.userId };
+  for (let index = 0; index < args.contactNumbers.length; index++) {
+    const number = args.contactNumbers[index];
+    const user = await context.db.query.user(
+      {
+        where: {
+          contactNumber: number
+        }
+      },
+      `{id}`
+    );
+    user
+      ? oldUserContactNumbers.push({ contactNumber: number })
+      : newUserContactNumbers.push({ contactNumber: number });
+  }
+
   const group = await context.db.mutation.createGroup(
     {
       data: {
-        users: { connect: [...users, admin] },
+        ...args.data,
         admin: {
           connect: admin
         },
-        welcomeText,
-        colorScheme,
-        description
+        users: {
+          connect: [admin, ...oldUserContactNumbers],
+          create: [...newUserContactNumbers]
+        }
       }
     },
-    info
+    `{id}`
   );
-  return group;
+  const signature = {
+    userId: context.userId,
+    activeGroup: group.id
+  };
+  const token = jwt.sign(signature, process.env.APP_SECRET);
+  return {
+    token,
+    group
+  };
 }
 
 async function createPost(parent, args, context, info) {
@@ -143,6 +170,7 @@ module.exports = {
   createUser,
   login,
   createGroup,
+  selectGroup,
   createPost,
   createTag,
   createComment

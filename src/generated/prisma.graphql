@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/frederikhermans/omaproof/dev
-# timestamp: Sat Nov 24 2018 17:20:33 GMT+0100 (Central European Standard Time)
+# timestamp: Tue Nov 27 2018 11:56:48 GMT+0100 (Central European Standard Time)
 
 type AggregateComment {
   count: Int!
@@ -2496,7 +2496,7 @@ type User implements Node {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
@@ -2504,8 +2504,7 @@ type User implements Node {
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group!]
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String!
   token: String
 }
@@ -2521,13 +2520,12 @@ type UserConnection {
 }
 
 input UserCreateInput {
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String!
   token: String
   posts: PostCreateManyWithoutUserInput
@@ -2556,13 +2554,12 @@ input UserCreateOneWithoutPostsInput {
 }
 
 input UserCreateWithoutCommentsInput {
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String!
   token: String
   posts: PostCreateManyWithoutUserInput
@@ -2570,13 +2567,12 @@ input UserCreateWithoutCommentsInput {
 }
 
 input UserCreateWithoutGroupsInput {
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String!
   token: String
   posts: PostCreateManyWithoutUserInput
@@ -2584,13 +2580,12 @@ input UserCreateWithoutGroupsInput {
 }
 
 input UserCreateWithoutPostsInput {
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String!
   token: String
   comments: CommentCreateManyWithoutUserInput
@@ -2623,10 +2618,8 @@ enum UserOrderByInput {
   generation_DESC
   email_ASC
   email_DESC
-  securityQuestions_ASC
-  securityQuestions_DESC
-  securityAnswers_ASC
-  securityAnswers_DESC
+  password_ASC
+  password_DESC
   contactNumber_ASC
   contactNumber_DESC
   token_ASC
@@ -2637,13 +2630,12 @@ type UserPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String!
   token: String
 }
@@ -2905,86 +2897,46 @@ input UserScalarWhereInput {
 
   """All values not ending with the given string."""
   email_not_ends_with: String
-  securityQuestions: String
+  password: String
 
   """All values that are not equal to given value."""
-  securityQuestions_not: String
+  password_not: String
 
   """All values that are contained in given list."""
-  securityQuestions_in: [String!]
+  password_in: [String!]
 
   """All values that are not contained in given list."""
-  securityQuestions_not_in: [String!]
+  password_not_in: [String!]
 
   """All values less than the given value."""
-  securityQuestions_lt: String
+  password_lt: String
 
   """All values less than or equal the given value."""
-  securityQuestions_lte: String
+  password_lte: String
 
   """All values greater than the given value."""
-  securityQuestions_gt: String
+  password_gt: String
 
   """All values greater than or equal the given value."""
-  securityQuestions_gte: String
+  password_gte: String
 
   """All values containing the given string."""
-  securityQuestions_contains: String
+  password_contains: String
 
   """All values not containing the given string."""
-  securityQuestions_not_contains: String
+  password_not_contains: String
 
   """All values starting with the given string."""
-  securityQuestions_starts_with: String
+  password_starts_with: String
 
   """All values not starting with the given string."""
-  securityQuestions_not_starts_with: String
+  password_not_starts_with: String
 
   """All values ending with the given string."""
-  securityQuestions_ends_with: String
+  password_ends_with: String
 
   """All values not ending with the given string."""
-  securityQuestions_not_ends_with: String
-  securityAnswers: String
-
-  """All values that are not equal to given value."""
-  securityAnswers_not: String
-
-  """All values that are contained in given list."""
-  securityAnswers_in: [String!]
-
-  """All values that are not contained in given list."""
-  securityAnswers_not_in: [String!]
-
-  """All values less than the given value."""
-  securityAnswers_lt: String
-
-  """All values less than or equal the given value."""
-  securityAnswers_lte: String
-
-  """All values greater than the given value."""
-  securityAnswers_gt: String
-
-  """All values greater than or equal the given value."""
-  securityAnswers_gte: String
-
-  """All values containing the given string."""
-  securityAnswers_contains: String
-
-  """All values not containing the given string."""
-  securityAnswers_not_contains: String
-
-  """All values starting with the given string."""
-  securityAnswers_starts_with: String
-
-  """All values not starting with the given string."""
-  securityAnswers_not_starts_with: String
-
-  """All values ending with the given string."""
-  securityAnswers_ends_with: String
-
-  """All values not ending with the given string."""
-  securityAnswers_not_ends_with: String
+  password_not_ends_with: String
   contactNumber: String
 
   """All values that are not equal to given value."""
@@ -3112,8 +3064,7 @@ input UserUpdateDataInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
   posts: PostUpdateManyWithoutUserInput
@@ -3127,8 +3078,7 @@ input UserUpdateInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
   posts: PostUpdateManyWithoutUserInput
@@ -3142,8 +3092,7 @@ input UserUpdateManyDataInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
 }
@@ -3154,8 +3103,7 @@ input UserUpdateManyMutationInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
 }
@@ -3203,8 +3151,7 @@ input UserUpdateWithoutCommentsDataInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
   posts: PostUpdateManyWithoutUserInput
@@ -3217,8 +3164,7 @@ input UserUpdateWithoutGroupsDataInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
   posts: PostUpdateManyWithoutUserInput
@@ -3231,8 +3177,7 @@ input UserUpdateWithoutPostsDataInput {
   age: Int
   generation: Int
   email: String
-  securityQuestions: String
-  securityAnswers: String
+  password: String
   contactNumber: String
   token: String
   comments: CommentUpdateManyWithoutUserInput
@@ -3522,86 +3467,46 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   email_not_ends_with: String
-  securityQuestions: String
+  password: String
 
   """All values that are not equal to given value."""
-  securityQuestions_not: String
+  password_not: String
 
   """All values that are contained in given list."""
-  securityQuestions_in: [String!]
+  password_in: [String!]
 
   """All values that are not contained in given list."""
-  securityQuestions_not_in: [String!]
+  password_not_in: [String!]
 
   """All values less than the given value."""
-  securityQuestions_lt: String
+  password_lt: String
 
   """All values less than or equal the given value."""
-  securityQuestions_lte: String
+  password_lte: String
 
   """All values greater than the given value."""
-  securityQuestions_gt: String
+  password_gt: String
 
   """All values greater than or equal the given value."""
-  securityQuestions_gte: String
+  password_gte: String
 
   """All values containing the given string."""
-  securityQuestions_contains: String
+  password_contains: String
 
   """All values not containing the given string."""
-  securityQuestions_not_contains: String
+  password_not_contains: String
 
   """All values starting with the given string."""
-  securityQuestions_starts_with: String
+  password_starts_with: String
 
   """All values not starting with the given string."""
-  securityQuestions_not_starts_with: String
+  password_not_starts_with: String
 
   """All values ending with the given string."""
-  securityQuestions_ends_with: String
+  password_ends_with: String
 
   """All values not ending with the given string."""
-  securityQuestions_not_ends_with: String
-  securityAnswers: String
-
-  """All values that are not equal to given value."""
-  securityAnswers_not: String
-
-  """All values that are contained in given list."""
-  securityAnswers_in: [String!]
-
-  """All values that are not contained in given list."""
-  securityAnswers_not_in: [String!]
-
-  """All values less than the given value."""
-  securityAnswers_lt: String
-
-  """All values less than or equal the given value."""
-  securityAnswers_lte: String
-
-  """All values greater than the given value."""
-  securityAnswers_gt: String
-
-  """All values greater than or equal the given value."""
-  securityAnswers_gte: String
-
-  """All values containing the given string."""
-  securityAnswers_contains: String
-
-  """All values not containing the given string."""
-  securityAnswers_not_contains: String
-
-  """All values starting with the given string."""
-  securityAnswers_starts_with: String
-
-  """All values not starting with the given string."""
-  securityAnswers_not_starts_with: String
-
-  """All values ending with the given string."""
-  securityAnswers_ends_with: String
-
-  """All values not ending with the given string."""
-  securityAnswers_not_ends_with: String
+  password_not_ends_with: String
   contactNumber: String
 
   """All values that are not equal to given value."""

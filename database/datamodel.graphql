@@ -14,7 +14,7 @@ type User {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
@@ -22,8 +22,7 @@ type User {
   comments: [Comment]
   groups: [Group] @relation(name: "GroupMembership")
   email: String @unique
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String! @unique
   token: String
 }
@@ -33,7 +32,7 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
-  tags: [Tag]
+  tags: [Tag] @relation(name: "PostTagRelation", onDelete: CASCADE)
   contentType: CONTENT_TYPE!
   description: String!
   mediaUrl: String
@@ -51,7 +50,7 @@ type Comment {
   mediaUrl: String
   published: Boolean! @default(value: "true")
   user: User!
-  tags: [Tag]
+  tags: [Tag] @relation(name: "CommentTagRelation", onDelete: CASCADE)
   post: Post! @relation(name: "CommentRelation")
 }
 
@@ -59,8 +58,8 @@ type Tag {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  link_post: Post
-  link_comment: Comment
+  link_post: Post @relation(name: "PostTagRelation")
+  link_comment: Comment @relation(name: "CommentTagRelation")
   user: User!
 }
 
