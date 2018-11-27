@@ -54,7 +54,6 @@ async function selectGroup(parent, args, context) {
     },
     `{id}`
   );
-
   const group = groups[0];
   if (!group) throw new Error('GroupId not available for user');
   const signature = { userId: context.userId, activeGroup: args.groupId };
@@ -112,8 +111,8 @@ async function createGroup(parent, args, context) {
 
 async function createPost(parent, args, context, info) {
   const options = {};
-  options.group = { connect: { id: args.groupId } };
-  options.user = { connect: { contactNumber: args.contactNumber } };
+  options.group = { connect: { id: context.activeGroup } };
+  options.user = { connect: { id: context.userId } };
   if (args.tags_contactNumbers) {
     options.tags = _createTags(args.tags_contactNumbers);
   }
@@ -144,10 +143,44 @@ async function createTag(parent, args, context, info) {
   );
 }
 
+async function _verifyTagUserId(contactNumbers, context) {
+  return await context.db.query.users(
+    {
+      where: {
+        groups_some: {
+          id: context.activeGroup
+        },
+        AND: {
+          contactNumbers_in: contactNumbers
+        }
+      }
+    },
+    `{id}`
+  );
+}
+
+async function _verifyPostId(postId, context) {
+  const posts = await context.db.query.posts(
+    {
+      where: {
+        id: postId,
+        AND: {
+          users_some: {
+            id: context.userId
+          }
+        }
+      }
+    },
+    `{id}`
+  );
+  return !posts[0] ? true : false;
+}
+
 async function createComment(parent, args, context, info) {
+  if (_verifyPostId(args.postId, context)) throw new Error('Invalid post id');
   const options = {};
   options.post = { connect: { id: args.postId } };
-  options.user = { connect: { contactNumber: args.contactNumber } };
+  options.user = { connect: { id: context.userId } };
   if (args.tags_contactNumbers) {
     options.tags = _createTags(args.tags_contactNumbers);
   }
@@ -162,7 +195,10 @@ async function createComment(parent, args, context, info) {
   );
 }
 
-function _createTags(tags_contactNumbers) {
+async function _createTags(tags_contactNumbers) {
+  console.log('tags: ', tags_contactNumbers); // eslint-disable-line
+  const verifiedIds = await _verifyTagUserId(tags_contactNumbers);
+  console.log('verified: ', verifiedIds); // eslint-disable-line
   const arr = tags_contactNumbers.map(contactNumber => {
     return { user: { connect: { contactNumber: contactNumber } } };
   });
