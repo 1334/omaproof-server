@@ -25,11 +25,11 @@ async function createUser(root, args, context) {
 async function login(root, args, context) {
   const user = await context.db.query.user(
     { where: { contactNumber: args.contactNumber } },
-    `{id password groups}`
+    `{id password}`
   );
   if (!user) throw new Error('User not found');
-  const valid = args.password === user.password;
-  if (!valid) throw new Error('Incorrect password');
+  // const valid = args.password === user.password;
+  // if (!valid) throw new Error('Incorrect password');
   const token = jwt.sign(
     { userId: user.id, activeGroup: null },
     process.env.APP_SECRET
@@ -41,25 +41,28 @@ async function login(root, args, context) {
 }
 
 async function selectGroup(parent, args, context) {
-  const user = await context.db.query.user(
-    { where: { Id: context.userId } },
-    `{id password groups}`
+  const groups = await context.db.query.groups(
+    {
+      where: {
+        id: args.groupId,
+        AND: {
+          users_some: {
+            id: context.userId
+          }
+        }
+      }
+    },
+    `{id}`
   );
-  if (user.groups.indexOf(args.groupId) <= -1) {
-    throw new Error('GroupId not available for user');
-  } else {
-    const token = jwt.sign(
-      {
-        userId: context.userId,
-        activeGroup: args.groupId
-      },
-      process.env.APP_SECRET
-    );
-    return {
-      token,
-      user
-    };
-  }
+
+  const group = groups[0];
+  if (!group) throw new Error('GroupId not available for user');
+  const signature = { userId: context.userId, activeGroup: args.groupId };
+  const token = jwt.sign(signature, process.env.APP_SECRET);
+  return {
+    token,
+    group
+  };
 }
 
 async function createGroup(parent, args, context) {

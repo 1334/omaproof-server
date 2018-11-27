@@ -6,6 +6,7 @@ const {
 const middleware1 = {
   Mutation: {
     createGroup: userAuthentication,
+    selectGroup: userAuthentication,
     createPost: GroupAuthentication,
     createTag: GroupAuthentication,
     createComment: GroupAuthentication

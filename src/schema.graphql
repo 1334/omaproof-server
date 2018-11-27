@@ -71,7 +71,7 @@ type Mutation {
     contactNumbers: [String!]
     adminId: String
   ): GroupAuthPayload
-  selectGroup(userId: String!, groupId: String!): GroupAuthPayload
+  selectGroup(groupId: String!): GroupAuthPayload
   createTag(contactNumber: String!, contentId: String!, isPost: Boolean!): Tag
   createPost(
     contactNumber: String!
