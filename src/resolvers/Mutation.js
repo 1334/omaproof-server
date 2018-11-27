@@ -114,7 +114,7 @@ async function createPost(parent, args, context, info) {
   options.group = { connect: { id: context.activeGroup } };
   options.user = { connect: { id: context.userId } };
   if (args.tags_contactNumbers) {
-    options.tags = _createTags(args.tags_contactNumbers);
+    options.tags = await _createTags(args.tags_contactNumbers, context);
   }
   return await context.db.mutation.createPost(
     {
@@ -127,23 +127,7 @@ async function createPost(parent, args, context, info) {
   );
 }
 
-async function createTag(parent, args, context, info) {
-  const link = {};
-  args.isPost
-    ? (link.link_post = { connect: { id: args.contentId } })
-    : (link.link_comment = { connect: { id: args.contentId } });
-  return await context.db.mutation.createTag(
-    {
-      data: {
-        user: { connect: { contactNumber: args.contactNumber } },
-        ...link
-      }
-    },
-    info
-  );
-}
-
-async function _verifyTagUserId(contactNumbers, context) {
+async function _verifyUserId(contactNumbers, context) {
   return await context.db.query.users(
     {
       where: {
@@ -151,38 +135,43 @@ async function _verifyTagUserId(contactNumbers, context) {
           id: context.activeGroup
         },
         AND: {
-          contactNumbers_in: contactNumbers
+          contactNumber_in: contactNumbers
         }
       }
     },
-    `{id}`
+    `{contactNumber}`
   );
 }
 
 async function _verifyPostId(postId, context) {
-  const posts = await context.db.query.posts(
-    {
-      where: {
-        id: postId,
-        AND: {
-          users_some: {
-            id: context.userId
+  try {
+    const posts = await context.db.query.posts(
+      {
+        where: {
+          id: postId,
+          AND: {
+            group: {
+              id: context.activeGroup
+            }
           }
         }
-      }
-    },
-    `{id}`
-  );
-  return !posts[0] ? true : false;
+      },
+      `{id}`
+    );
+    return !!posts[0];
+  } catch (error) {
+    throw new Error('Invalid post id');
+  }
 }
 
 async function createComment(parent, args, context, info) {
-  if (_verifyPostId(args.postId, context)) throw new Error('Invalid post id');
+  if (!(await _verifyPostId(args.postId, context)))
+    throw new Error('Invalid post id');
   const options = {};
   options.post = { connect: { id: args.postId } };
   options.user = { connect: { id: context.userId } };
   if (args.tags_contactNumbers) {
-    options.tags = _createTags(args.tags_contactNumbers);
+    options.tags = await _createTags(args.tags_contactNumbers, context);
   }
   return await context.db.mutation.createComment(
     {
@@ -195,12 +184,10 @@ async function createComment(parent, args, context, info) {
   );
 }
 
-async function _createTags(tags_contactNumbers) {
-  console.log('tags: ', tags_contactNumbers); // eslint-disable-line
-  const verifiedIds = await _verifyTagUserId(tags_contactNumbers);
-  console.log('verified: ', verifiedIds); // eslint-disable-line
-  const arr = tags_contactNumbers.map(contactNumber => {
-    return { user: { connect: { contactNumber: contactNumber } } };
+async function _createTags(tags_contactNumbers, context) {
+  const verifiedIds = await _verifyUserId(tags_contactNumbers, context);
+  const arr = verifiedIds.map(el => {
+    return { user: { connect: { contactNumber: el.contactNumber } } };
   });
   return { create: arr };
 }
@@ -211,6 +198,5 @@ module.exports = {
   createGroup,
   selectGroup,
   createPost,
-  createTag,
   createComment
 };

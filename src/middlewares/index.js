@@ -8,7 +8,6 @@ const middleware1 = {
     createGroup: userAuthentication,
     selectGroup: userAuthentication,
     createPost: GroupAuthentication,
-    createTag: GroupAuthentication,
     createComment: GroupAuthentication
   }
 };

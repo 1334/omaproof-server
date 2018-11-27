@@ -72,7 +72,6 @@ type Mutation {
     adminId: String
   ): GroupAuthPayload
   selectGroup(groupId: String!): GroupAuthPayload
-  createTag(contactNumber: String!, contentId: String!, isPost: Boolean!): Tag
   createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
   createComment(
     postId: String!

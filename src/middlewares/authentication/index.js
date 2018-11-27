@@ -18,7 +18,6 @@ const GroupAuthentication = (resolve, root, args, context, info) => {
   if (authorization) {
     const token = authorization.replace('Bearer ', '');
     const { userId, activeGroup } = jwt.verify(token, process.env.APP_SECRET);
-    console.log('AUTHENTICATION: ', { userId, activeGroup });
     if (!userId) throw new Error('Invalid authorization, is user logged in?');
     if (!activeGroup)
       throw new Error(
