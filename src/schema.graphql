@@ -9,11 +9,12 @@
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
 type Query {
-  getGroups(where: GroupSearchInput!): [Group]
-  getUsers(where: UsersSearchInput!): [User]
-  getPosts(where: PostsSearchInput!): [Post]
-  getComments(where: CommentsSearchInput!): [Comment]
-  getTags(where: InputTagSearch!): [Tag]
+  getGroups(where: GroupSearchInput!, UserId: String): [Group]
+  getUsers(where: UsersSearchInput!, GroupId: String): [User]
+  getPosts(where: PostsSearchInput!, GroupId: String): [Post]
+  getComments(where: CommentsSearchInput!, GroupId: String): [Comment]
+  getTagsForPosts(where: InputTagSearch!, GroupId: String): [Tag]
+  getTagsForComments(where: InputTagSearch!, GroupId: String): [Tag]
 }
 
 input GroupSearchInput {
@@ -45,7 +46,7 @@ input CommentsSearchInput {
   id: String
   user: InputUserUnique
   tags_some: InputId
-  post: InputId
+  post: PostsSearchInput
   published: Boolean
 }
 
