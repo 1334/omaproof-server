@@ -192,11 +192,63 @@ async function _createTags(tags_contactNumbers, context) {
   return { create: arr };
 }
 
+async function deletePost(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deletePost(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
+async function deleteComment(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deleteComment(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
+async function deleteTag(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deleteTag(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
+async function deleteUser(parent, args, context, info) {
+  const id = args.id;
+  return await context.db.mutation.deleteUser(
+    {
+      where: {
+        id: id
+      }
+    },
+    info
+  );
+}
+
 module.exports = {
   createUser,
   login,
   createGroup,
   selectGroup,
   createPost,
-  createComment
+  createComment,
+  deletePost,
+  deleteComment,
+  deleteTag,
+  deleteUser
 };
