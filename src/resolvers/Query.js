@@ -44,9 +44,9 @@ async function getTags(parent, args, context, info) {
 }
 
 module.exports = {
+  getGroups,
   getUsers,
   getPosts,
   getComments,
-  getGroups,
   getTags
 };
