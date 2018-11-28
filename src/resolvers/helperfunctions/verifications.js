@@ -83,8 +83,55 @@ async function verifyPostId(context, postId, checkUserId = false) {
   }
 }
 
+async function verifyCommentId(context, commentId, checkUserId = false) {
+  try {
+    const comments = await context.db.query.comments(
+      {
+        where: {
+          id: commentId,
+          AND: {
+            group: {
+              id: context.activeGroup
+            }
+          }
+        }
+      },
+      `{id user {id}}`
+    );
+    if (!comments[0]) return false;
+    return checkUserId ? context.userId === comments[0].user.id : true;
+  } catch (error) {
+    throw new Error('Invalid');
+  }
+}
+
+async function verifyTagId(context, tagId, checkUserId = false) {
+  const tag = await context.db.query.tag(
+    {
+      where: {
+        id: tagId
+      }
+    },
+    `{
+      id 
+      link_post {id group {id} user {id}} 
+      link_comment {id post {group {id}} user {id}} 
+    }`
+  );
+  if (!tag) return false;
+  if (tag.link_post) {
+    if (!(tag.link_post.group.id === context.activeGroup)) return false;
+    return checkUserId ? context.userId === tag.link_post.user.id : true;
+  } else {
+    if (!(tag.link_comment.post.group.id === context.activeGroup)) return false;
+    return checkUserId ? context.userId === tag.link_comment.user.id : true;
+  }
+}
+
 module.exports = {
   verifyPostId,
+  verifyCommentId,
+  verifyTagId,
   verifyUserIdByContactNumbers,
   verifyUserIsAdminById,
   verifyUserIsInGroupById

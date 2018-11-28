@@ -1,6 +1,8 @@
 const {
   verifyPostId,
-  verifyUserIdByContactNumbers
+  verifyTagId,
+  verifyUserIdByContactNumbers,
+  verifyCommentId
 } = require('../../helperfunctions/verifications');
 
 async function createPost(parent, args, context, info) {
@@ -54,7 +56,6 @@ async function _createTags(tags_contactNumbers, context) {
 
 async function deletePost(parent, args, context, info) {
   if (!(await verifyPostId(context, args.id, true))) throw new Error('Invalid');
-
   return context.db.mutation.deletePost(
     {
       where: {
@@ -66,71 +67,28 @@ async function deletePost(parent, args, context, info) {
 }
 
 async function deleteComment(parent, args, context, info) {
-  const comment = await context.db.query.comment(
+  if (!(await verifyCommentId(context, args.id, true)))
+    throw new Error('Invalid');
+  return context.db.mutation.deleteComment(
     {
       where: {
         id: args.id
       }
     },
-    `{
-      id
-      post {
-        group 
-          {id}
-      }
-      user 
-        {id}
-    }`
+    info
   );
-  if (
-    context.userId !== comment.user.id ||
-    context.activeGroup !== comment.post.group.id
-  ) {
-    throw new Error('Invalide');
-  } else {
-    return await context.db.mutation.deleteComment(
-      {
-        where: {
-          id: args.id
-        }
-      },
-      info
-    );
-  }
 }
 
 async function deleteTag(parent, args, context, info) {
-  const tag = await context.db.query.tag(
+  if (!(await verifyTagId(context, args.id, true))) throw new Error('Invalid');
+  return context.db.mutation.deleteTag(
     {
       where: {
         id: args.id
       }
     },
-    `{
-      id 
-      link_post {id group {id} user {id}} 
-      link_comment {id post {group {id}} user {id}} 
-    }`
+    info
   );
-  if (
-    (tag.link_post &&
-      (tag.link_post.user.id === context.userId &&
-        tag.link_post.group.id === context.activeGroup)) ||
-    (tag.link_comment &&
-      (tag.link_comment.user.id === context.userId &&
-        tag.link_comment.post.group.id === context.activeGroup))
-  ) {
-    return await context.db.mutation.deleteTag(
-      {
-        where: {
-          id: args.id
-        }
-      },
-      info
-    );
-  } else {
-    throw new Error('Invalide');
-  }
 }
 
 module.exports = {
