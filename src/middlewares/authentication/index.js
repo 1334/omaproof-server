@@ -17,8 +17,7 @@ const groupAuthentication = (resolve, root, args, context, info) => {
 
   const token = authorization.replace('Bearer ', '');
   const { userId, activeGroup } = jwt.verify(token, process.env.APP_SECRET);
-  if (!userId) throw new Error('Invalid authorization');
-  if (!activeGroup) throw new Error('Invalid authorization');
+  if (!userId || !activeGroup) throw new Error('Invalid authorization');
   context.userId = userId;
   context.activeGroup = activeGroup;
   return resolve(root, args, context, info);
