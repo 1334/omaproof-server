@@ -32,6 +32,7 @@ async function login(root, args, context) {
     `{id password}`
   );
   if (!user) throw new Error('User not found');
+
   // const valid = args.password === user.password;
   // if (!valid) throw new Error('Incorrect password');
   const token = jwt.sign(
@@ -54,6 +55,7 @@ async function updateUser(parent, args, context, info) {
     isAdmin = await verifyUserIsAdminById(context);
   }
   if (!isUserSelf && !isAdmin) throw new Error('Invalid');
+
   return context.db.mutation.updateUser(
     {
       data: {
@@ -68,7 +70,8 @@ async function updateUser(parent, args, context, info) {
 }
 
 async function deleteUser(parent, args, context, info) {
-  if (!(args.id === context.userId)) throw new Error('Invalide');
+  if (!(args.id === context.userId)) throw new Error('Invalid');
+
   return context.db.mutation.deleteUser(
     {
       where: {

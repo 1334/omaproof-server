@@ -1,5 +1,5 @@
 async function getPosts(parent, args, context, info) {
-  return await context.db.query.posts(
+  return context.db.query.posts(
     {
       where: { ...args.where, AND: { group: { id: context.activeGroup } } }
     },
@@ -8,7 +8,7 @@ async function getPosts(parent, args, context, info) {
 }
 
 async function getComments(parent, args, context, info) {
-  return await context.db.query.comments(
+  return context.db.query.comments(
     {
       where: {
         ...args.where,
@@ -20,7 +20,7 @@ async function getComments(parent, args, context, info) {
 }
 
 async function getTagsForPosts(parent, args, context, info) {
-  return await context.db.query.tags(
+  return context.db.query.tags(
     {
       where: {
         ...args.where,
@@ -34,7 +34,7 @@ async function getTagsForPosts(parent, args, context, info) {
 }
 
 async function getTagsForComments(parent, args, context, info) {
-  return await context.db.query.tags(
+  return context.db.query.tags(
     {
       where: {
         ...args.where,

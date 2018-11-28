@@ -8,7 +8,7 @@ async function selectGroup(parent, args, context) {
   const groups = await context.db.query.groups(
     {
       where: {
-        id: args.groupId,
+        id: args.id,
         AND: {
           users_some: {
             id: context.userId
@@ -19,8 +19,8 @@ async function selectGroup(parent, args, context) {
     `{id}`
   );
   const group = groups[0];
-  if (!group) throw new Error('GroupId not available for user');
-  const signature = { userId: context.userId, activeGroup: args.groupId };
+  if (!group) throw new Error('Invalid');
+  const signature = { userId: context.userId, activeGroup: args.id };
   const token = jwt.sign(signature, process.env.APP_SECRET);
   return {
     token,
