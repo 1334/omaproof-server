@@ -3,7 +3,7 @@ const {
   groupAuthentication
 } = require('./authentication/');
 
-const middleware1 = {
+const authentication = {
   Mutation: {
     createGroup: userAuthentication,
     selectGroup: userAuthentication,
@@ -12,7 +12,7 @@ const middleware1 = {
   }
 };
 
-const middlewares = [middleware1];
+const middlewares = [authentication];
 
 module.exports = {
   middlewares
