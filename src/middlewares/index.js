@@ -1,14 +1,14 @@
 const {
   userAuthentication,
-  GroupAuthentication
+  groupAuthentication
 } = require('./authentication/');
 
 const middleware1 = {
   Mutation: {
     createGroup: userAuthentication,
     selectGroup: userAuthentication,
-    createPost: GroupAuthentication,
-    createComment: GroupAuthentication
+    createPost: groupAuthentication,
+    createComment: groupAuthentication
   }
 };
 
