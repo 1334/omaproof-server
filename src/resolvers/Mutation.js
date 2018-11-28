@@ -1,5 +1,11 @@
 const jwt = require('jsonwebtoken');
 const uuidv4 = require('uuid/v4');
+const {
+  verifyPostId,
+  verifyUserIdByContactNumbers,
+  verifyUserIsAdminById,
+  verifyUserIsInGroupById
+} = require('./helperfunctions/verifications');
 
 async function createUser(root, args, context) {
   // auto generate password:
@@ -112,9 +118,9 @@ async function createGroup(parent, args, context) {
 // Access verification: it is either the user itself or the admin
 async function updateUser(parent, args, context, info) {
   const isUserSelf = context.userId === args.userId;
-  const isValidUser = await _verifyUserIsInGroupById(args.userId, context);
+  const isValidUser = await verifyUserIsInGroupById(args.userId, context);
   if (!isValidUser) throw new Error('Invalid authorization');
-  const isAdmin = await _verifyUserIsAdminById(context);
+  const isAdmin = await verifyUserIsAdminById(context);
   if (!isUserSelf && !isAdmin) throw new Error('Invalid authorization');
   return context.db.mutation.updateUser(
     {
@@ -127,32 +133,6 @@ async function updateUser(parent, args, context, info) {
     },
     info
   );
-}
-
-async function _verifyUserIsAdminById(context) {
-  const group = await context.db.query.group(
-    {
-      where: {
-        id: context.activeGroup
-      }
-    },
-    `{admin {id}}`
-  );
-
-  return group.admin.id === context.userId;
-}
-
-async function _verifyUserIsInGroupById(userId, context) {
-  const user = await context.db.query.user(
-    {
-      where: {
-        id: userId
-      }
-    },
-    `{id groups {id}}`
-  );
-  if (!user) throw new Error('Invalid');
-  return user.groups.find(group => group.id === context.activeGroup);
 }
 
 async function createPost(parent, args, context, info) {
@@ -173,45 +153,8 @@ async function createPost(parent, args, context, info) {
   );
 }
 
-async function _verifyUserIdByContactNumbers(contactNumbers, context) {
-  return context.db.query.users(
-    {
-      where: {
-        groups_some: {
-          id: context.activeGroup
-        },
-        AND: {
-          contactNumber_in: contactNumbers
-        }
-      }
-    },
-    `{contactNumber}`
-  );
-}
-
-async function _verifyPostId(postId, context) {
-  try {
-    const posts = await context.db.query.posts(
-      {
-        where: {
-          id: postId,
-          AND: {
-            group: {
-              id: context.activeGroup
-            }
-          }
-        }
-      },
-      `{id}`
-    );
-    return !!posts[0];
-  } catch (error) {
-    throw new Error('Invalid post id');
-  }
-}
-
 async function createComment(parent, args, context, info) {
-  if (!(await _verifyPostId(args.postId, context)))
+  if (!(await verifyPostId(args.postId, context)))
     throw new Error('Invalid post id');
   const options = {};
   options.post = { connect: { id: args.postId } };
@@ -231,7 +174,7 @@ async function createComment(parent, args, context, info) {
 }
 
 async function _createTags(tags_contactNumbers, context) {
-  const verifiedIds = await _verifyUserIdByContactNumbers(
+  const verifiedIds = await verifyUserIdByContactNumbers(
     tags_contactNumbers,
     context
   );
