@@ -240,6 +240,24 @@ async function deleteUser(parent, args, context, info) {
   );
 }
 
+async function updatePost(parent, args, context, info) {
+  if (
+    await context.db.query.posts({
+      where: { id: args.where.id, AND: { user: { id: args.UserId } } }
+    })
+  ) {
+    return await context.db.mutation.updatePost(
+      {
+        where: {
+          ...args.where
+        },
+        data: { ...args.data }
+      },
+      info
+    );
+  }
+}
+
 module.exports = {
   createUser,
   login,
@@ -250,5 +268,6 @@ module.exports = {
   deletePost,
   deleteComment,
   deleteTag,
-  deleteUser
+  deleteUser,
+  updatePost
 };
