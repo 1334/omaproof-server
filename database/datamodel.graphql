@@ -14,7 +14,7 @@ type User {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
@@ -22,8 +22,7 @@ type User {
   comments: [Comment]
   groups: [Group] @relation(name: "GroupMembership")
   email: String @unique
-  securityQuestions: String!
-  securityAnswers: String!
+  password: String
   contactNumber: String! @unique
   token: String
 }
