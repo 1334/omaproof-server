@@ -35,6 +35,12 @@ input UserCreation {
   contactNumber: String!
 }
 
+input UserUpdate {
+  name: String
+  profilePicture: String
+  email: String
+}
+
 type UserAuthPayload {
   token: String
   user: User
@@ -74,4 +80,5 @@ type Mutation {
     content: ContentCreation!
     tags_contactNumbers: [String]
   ): Comment
+  updateUser(data: UserUpdate, userId: String): User
 }

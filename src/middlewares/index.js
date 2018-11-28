@@ -8,7 +8,8 @@ const authentication = {
     createGroup: userAuthentication,
     selectGroup: userAuthentication,
     createPost: groupAuthentication,
-    createComment: groupAuthentication
+    createComment: groupAuthentication,
+    updateUser: groupAuthentication
   }
 };
 

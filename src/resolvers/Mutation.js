@@ -109,6 +109,52 @@ async function createGroup(parent, args, context) {
   };
 }
 
+// Access verification: it is either the user itself or the admin
+async function updateUser(parent, args, context, info) {
+  const isUserSelf = context.userId === args.userId;
+  const isValidUser = await _verifyUserIsInGroupById(args.userId, context);
+  if (!isValidUser) throw new Error('Invalid authorization');
+  const isAdmin = await _verifyUserIsAdminById(context);
+  if (!isUserSelf && !isAdmin) throw new Error('Invalid authorization');
+  return context.db.mutation.updateUser(
+    {
+      data: {
+        ...args.data
+      },
+      where: {
+        id: args.userId
+      }
+    },
+    info
+  );
+}
+
+async function _verifyUserIsAdminById(context) {
+  const group = await context.db.query.group(
+    {
+      where: {
+        id: context.activeGroup
+      }
+    },
+    `{admin {id}}`
+  );
+
+  return group.admin.id === context.userId;
+}
+
+async function _verifyUserIsInGroupById(userId, context) {
+  const user = await context.db.query.user(
+    {
+      where: {
+        id: userId
+      }
+    },
+    `{id groups {id}}`
+  );
+  if (!user) throw new Error('Invalid');
+  return user.groups.find(group => group.id === context.activeGroup);
+}
+
 async function createPost(parent, args, context, info) {
   const options = {};
   options.group = { connect: { id: context.activeGroup } };
@@ -116,7 +162,7 @@ async function createPost(parent, args, context, info) {
   if (args.tags_contactNumbers) {
     options.tags = await _createTags(args.tags_contactNumbers, context);
   }
-  return await context.db.mutation.createPost(
+  return context.db.mutation.createPost(
     {
       data: {
         ...args.content,
@@ -127,8 +173,8 @@ async function createPost(parent, args, context, info) {
   );
 }
 
-async function _verifyUserId(contactNumbers, context) {
-  return await context.db.query.users(
+async function _verifyUserIdByContactNumbers(contactNumbers, context) {
+  return context.db.query.users(
     {
       where: {
         groups_some: {
@@ -173,7 +219,7 @@ async function createComment(parent, args, context, info) {
   if (args.tags_contactNumbers) {
     options.tags = await _createTags(args.tags_contactNumbers, context);
   }
-  return await context.db.mutation.createComment(
+  return context.db.mutation.createComment(
     {
       data: {
         ...args.content,
@@ -185,7 +231,10 @@ async function createComment(parent, args, context, info) {
 }
 
 async function _createTags(tags_contactNumbers, context) {
-  const verifiedIds = await _verifyUserId(tags_contactNumbers, context);
+  const verifiedIds = await _verifyUserIdByContactNumbers(
+    tags_contactNumbers,
+    context
+  );
   const arr = verifiedIds.map(el => {
     return { user: { connect: { contactNumber: el.contactNumber } } };
   });
@@ -198,5 +247,6 @@ module.exports = {
   createGroup,
   selectGroup,
   createPost,
-  createComment
+  createComment,
+  updateUser
 };
