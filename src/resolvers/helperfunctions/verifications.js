@@ -12,7 +12,6 @@ async function verifyUserIsAdminById(context) {
     },
     `{admin {id}}`
   );
-
   return group.admin.id === context.userId;
 }
 

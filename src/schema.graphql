@@ -128,14 +128,14 @@ type Mutation {
   createUser(data: UserCreation): UserAuthPayload
   login(contactNumber: String!, password: String!): UserAuthPayload
   createGroup(data: GroupCreation, contactNumbers: [String!]): GroupAuthPayload
-  selectGroup(groupId: String!): GroupAuthPayload
+  selectGroup(id: String!): GroupAuthPayload
   createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
   createComment(
     postId: String!
     content: ContentCreation!
     tags_contactNumbers: [String]
   ): Comment
-  updateUser(data: UserUpdate, userId: String): User
+  updateUser(data: UserUpdate, id: String): User
   deletePost(id: String!): Post
   deleteComment(id: String!): Comment
   deleteTag(id: String!): Tag

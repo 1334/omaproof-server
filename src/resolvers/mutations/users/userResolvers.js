@@ -46,18 +46,21 @@ async function login(root, args, context) {
 
 // Access verification: it is either the user itself or the admin
 async function updateUser(parent, args, context, info) {
-  const isUserSelf = context.userId === args.userId;
-  const isValidUser = await verifyUserIsInGroupById(args.userId, context);
-  if (!isValidUser) throw new Error('Invalid authorization');
-  const isAdmin = await verifyUserIsAdminById(context);
-  if (!isUserSelf && !isAdmin) throw new Error('Invalid authorization');
+  let isUserSelf, isValidUser, isAdmin;
+  isUserSelf = context.userId === args.id;
+  if (!isUserSelf) {
+    isValidUser = await verifyUserIsInGroupById(args.id, context);
+    if (!isValidUser) throw new Error('Invalid');
+    isAdmin = await verifyUserIsAdminById(context);
+  }
+  if (!isUserSelf && !isAdmin) throw new Error('Invalid');
   return context.db.mutation.updateUser(
     {
       data: {
         ...args.data
       },
       where: {
-        id: args.userId
+        id: args.id
       }
     },
     info
@@ -65,18 +68,15 @@ async function updateUser(parent, args, context, info) {
 }
 
 async function deleteUser(parent, args, context, info) {
-  if (args.id === context.userId) {
-    return await context.db.mutation.deleteUser(
-      {
-        where: {
-          id: args.id
-        }
-      },
-      info
-    );
-  } else {
-    throw new Error('Invalide');
-  }
+  if (!(args.id === context.userId)) throw new Error('Invalide');
+  return context.db.mutation.deleteUser(
+    {
+      where: {
+        id: args.id
+      }
+    },
+    info
+  );
 }
 
 module.exports = { createUser, login, updateUser, deleteUser };
