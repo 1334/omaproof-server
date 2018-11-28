@@ -1,7 +1,7 @@
 const {
   verifyPostId,
   verifyUserIdByContactNumbers
-} = require('../helperfunctions/verifications');
+} = require('../../helperfunctions/verifications');
 
 async function createPost(parent, args, context, info) {
   const options = {};

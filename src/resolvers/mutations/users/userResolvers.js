@@ -3,7 +3,7 @@ const uuidv4 = require('uuid/v4');
 const {
   verifyUserIsAdminById,
   verifyUserIsInGroupById
-} = require('./helperfunctions/verifications');
+} = require('../../helperfunctions/verifications');
 
 async function createUser(root, args, context) {
   // auto generate password:
