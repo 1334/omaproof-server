@@ -1,5 +1,5 @@
 async function getUsers(parent, args, context, info) {
-  return await context.db.query.users(
+  return context.db.query.users(
     {
       where: {
         ...args.where,
