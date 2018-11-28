@@ -1,7 +1,7 @@
-const Mutation = require('./Mutation');
-const UserAuthPayload = require('./UserAuthPayload');
-const GroupAuthPayload = require('./GroupAuthPayload');
-const Query = require('./Query');
+const Mutation = require('./mutations');
+const UserAuthPayload = require('./authentication/UserAuthPayload');
+const GroupAuthPayload = require('./authentication/GroupAuthPayload');
+const Query = require('./queries');
 
 const resolvers = {
   Query,
