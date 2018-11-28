@@ -209,18 +209,17 @@ async function deletePost(parent, args, context, info) {
     }`
   );
 
-  if (args.userId !== post.user.id || args.activeGroup !== post.group.id) {
-    throw new Error('Invalide');
-  } else {
-    return await context.db.mutation.deletePost(
-      {
-        where: {
-          id: args.id
-        }
-      },
-      info
-    );
-  }
+  if (context.userId !== post.user.id || context.activeGroup !== post.group.id)
+    throw new Error('Invalid');
+
+  return await context.db.mutation.deletePost(
+    {
+      where: {
+        id: args.id
+      }
+    },
+    info
+  );
 }
 
 async function deleteComment(parent, args, context, info) {

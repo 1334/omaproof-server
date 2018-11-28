@@ -133,7 +133,7 @@ type Mutation {
     content: ContentCreation!
     tags_contactNumbers: [String]
   ): Comment
-  deletePost(id: String!, userId: String!, activeGroup: String!): Post
+  deletePost(id: String!): Post
   deleteComment(id: String!, userId: String!, activeGroup: String!): Comment
   deleteTag(id: String!, userId: String!, activeGroup: String!): Tag
   deleteUser(id: String!, userId: String!): User
