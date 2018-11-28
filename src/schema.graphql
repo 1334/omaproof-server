@@ -115,6 +115,14 @@ input ContentCreation {
   published: Boolean
 }
 
+input PostUpdate {
+  contentType: CONTENT_TYPE
+  description: String
+  mediaUrl: String
+  published: Boolean
+  group: InputId
+}
+
 type Mutation {
   createUser(data: SignUp!): AuthPayload
   login(contactNumber: String!, securityAnswers: String!): AuthPayload
@@ -136,4 +144,10 @@ type Mutation {
   deleteComment(id: String!): Comment
   deleteTag(id: String!): Tag
   deleteUser(id: String!): User
+  updatePost(
+    where: InputId
+    data: PostUpdate
+    UserId: String
+    GroupId: String
+  ): Post
 }
