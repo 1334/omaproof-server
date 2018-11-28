@@ -56,11 +56,12 @@ async function verifyUserIdByContactNumbers(contactNumbers, context) {
 }
 
 /**
- * Check that the postId is part of the active group
+ * Check that the postId is part of the active group (and) that the post is from the user
  * @param {*} postId postId to be checked
  * @param {*} context graphql context object (also contains authentication activegroup and userId)
+ * @param {*} checkUserId boolean to check or not if user owns post
  */
-async function verifyPostId(postId, context) {
+async function verifyPostId(context, postId, checkUserId = false) {
   try {
     const posts = await context.db.query.posts(
       {
@@ -73,11 +74,12 @@ async function verifyPostId(postId, context) {
           }
         }
       },
-      `{id}`
+      `{id user {id}}`
     );
-    return !!posts[0];
+    if (!posts[0]) return false;
+    return checkUserId ? context.userId === posts[0].user.id : true;
   } catch (error) {
-    throw new Error('Invalid post id');
+    throw new Error('Invalid');
   }
 }
 

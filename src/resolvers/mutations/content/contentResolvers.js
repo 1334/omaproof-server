@@ -22,7 +22,7 @@ async function createPost(parent, args, context, info) {
 }
 
 async function createComment(parent, args, context, info) {
-  if (!(await verifyPostId(args.postId, context)))
+  if (!(await verifyPostId(context, args.postId)))
     throw new Error('Invalid post id');
   const options = {};
   options.post = { connect: { id: args.postId } };
@@ -53,25 +53,9 @@ async function _createTags(tags_contactNumbers, context) {
 }
 
 async function deletePost(parent, args, context, info) {
-  const post = await context.db.query.post(
-    {
-      where: {
-        id: args.id
-      }
-    },
-    `{
-      id
-      group 
-        {id}
-      user 
-        {id}
-    }`
-  );
+  if (!(await verifyPostId(context, args.id, true))) throw new Error('Invalid');
 
-  if (context.userId !== post.user.id || context.activeGroup !== post.group.id)
-    throw new Error('Invalid');
-
-  return await context.db.mutation.deletePost(
+  return context.db.mutation.deletePost(
     {
       where: {
         id: args.id
