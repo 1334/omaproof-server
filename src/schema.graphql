@@ -16,7 +16,7 @@ type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  name: String
   profilePicture: String
   age: Int
   generation: Int
@@ -66,11 +66,7 @@ input ContentCreation {
 type Mutation {
   createUser(data: UserCreation): UserAuthPayload
   login(contactNumber: String!, password: String!): UserAuthPayload
-  createGroup(
-    data: GroupCreation
-    contactNumbers: [String!]
-    adminId: String
-  ): GroupAuthPayload
+  createGroup(data: GroupCreation, contactNumbers: [String!]): GroupAuthPayload
   selectGroup(groupId: String!): GroupAuthPayload
   createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
   createComment(

@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/frederikhermans/omaproof/dev
-# timestamp: Tue Nov 27 2018 11:56:48 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Nov 28 2018 14:09:20 GMT+0100 (Central European Standard Time)
 
 type AggregateComment {
   count: Int!
