@@ -1,98 +1,120 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const uuidv4 = require('uuid/v4');
 
-async function _createUser(context, signUpObject) {
-  return context.db.mutation.createUser(
+async function createUser(root, args, context) {
+  // auto generate password:
+  args.data.password = uuidv4();
+  const user = await context.db.mutation.createUser(
     {
       data: {
-        ...signUpObject,
-        groups: signUpObject.groups.slice().map(group => {
-          return {
-            connect: {
-              id: group
-            }
-          };
-        })
+        ...args.data
       }
     },
     `{id}`
   );
-}
-
-async function createUser(root, args, context, info, callback = _createUser) {
-  const signUpObject = args.data;
-  if (!signUpObject.securityQuestions)
-    signUpObject.securityQuestions = 'Password';
-  try {
-    signUpObject.securityAnswers = await bcrypt.hash(
-      signUpObject.securityAnswers,
-      10
-    );
-  } catch (error) {
-    throw new Error('Invalid security answers');
-  }
-  const user = await callback(context, signUpObject);
-  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+  const token = jwt.sign(
+    { userId: user.id, activeGroup: null },
+    process.env.APP_SECRET
+  );
   return {
     token,
     user
   };
 }
 
-async function _getAuthObject(context, contactNumber) {
-  return context.db.query.user(
-    { where: { contactNumber: contactNumber } },
-    `{id securityAnswers}`
+async function login(root, args, context) {
+  const user = await context.db.query.user(
+    { where: { contactNumber: args.contactNumber } },
+    `{id password}`
   );
-}
-
-async function login(root, args, context, info, callback = _getAuthObject) {
-  const user = await callback(context, args.contactNumber);
   if (!user) throw new Error('User not found');
-  const valid = await bcrypt.compare(
-    args.securityAnswers,
-    user.securityAnswers
+  // const valid = args.password === user.password;
+  // if (!valid) throw new Error('Incorrect password');
+  const token = jwt.sign(
+    { userId: user.id, activeGroup: null },
+    process.env.APP_SECRET
   );
-  if (!valid) throw new Error('Incorrect password');
-  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
     user
   };
 }
 
-async function createGroup(parent, args, context, info) {
-  let users = [];
-  let admin = { contactNumber: args.data.admin_contactNumber };
-  const { colorScheme, welcomeText, description } = args.data;
-  if (args.data.users_contactNumbers) {
-    users = args.data.users_contactNumbers.map(contactNumber => {
-      return { contactNumber: contactNumber };
-    });
+async function selectGroup(parent, args, context) {
+  const groups = await context.db.query.groups(
+    {
+      where: {
+        id: args.groupId,
+        AND: {
+          users_some: {
+            id: context.userId
+          }
+        }
+      }
+    },
+    `{id}`
+  );
+  const group = groups[0];
+  if (!group) throw new Error('GroupId not available for user');
+  const signature = { userId: context.userId, activeGroup: args.groupId };
+  const token = jwt.sign(signature, process.env.APP_SECRET);
+  return {
+    token,
+    group
+  };
+}
+
+async function createGroup(parent, args, context) {
+  const newUserContactNumbers = [];
+  const oldUserContactNumbers = [];
+  const admin = { id: context.userId };
+  for (let index = 0; index < args.contactNumbers.length; index++) {
+    const number = args.contactNumbers[index];
+    const user = await context.db.query.user(
+      {
+        where: {
+          contactNumber: number
+        }
+      },
+      `{id}`
+    );
+    user
+      ? oldUserContactNumbers.push({ contactNumber: number })
+      : newUserContactNumbers.push({ contactNumber: number });
   }
+
   const group = await context.db.mutation.createGroup(
     {
       data: {
-        users: { connect: [...users, admin] },
+        ...args.data,
         admin: {
           connect: admin
         },
-        welcomeText,
-        colorScheme,
-        description
+        users: {
+          connect: [admin, ...oldUserContactNumbers],
+          create: [...newUserContactNumbers]
+        }
       }
     },
-    info
+    `{id}`
   );
-  return group;
+  const signature = {
+    userId: context.userId,
+    activeGroup: group.id
+  };
+  const token = jwt.sign(signature, process.env.APP_SECRET);
+  return {
+    token,
+    group
+  };
 }
 
 async function createPost(parent, args, context, info) {
   const options = {};
-  options.group = { connect: { id: args.groupId } };
-  options.user = { connect: { contactNumber: args.contactNumber } };
+  options.group = { connect: { id: context.activeGroup } };
+  options.user = { connect: { id: context.userId } };
   if (args.tags_contactNumbers) {
-    options.tags = _createTags(args.tags_contactNumbers);
+    options.tags = await _createTags(args.tags_contactNumbers, context);
   }
   return await context.db.mutation.createPost(
     {
@@ -105,28 +127,51 @@ async function createPost(parent, args, context, info) {
   );
 }
 
-async function createTag(parent, args, context, info) {
-  const link = {};
-  args.isPost
-    ? (link.link_post = { connect: { id: args.contentId } })
-    : (link.link_comment = { connect: { id: args.contentId } });
-  return await context.db.mutation.createTag(
+async function _verifyUserId(contactNumbers, context) {
+  return await context.db.query.users(
     {
-      data: {
-        user: { connect: { contactNumber: args.contactNumber } },
-        ...link
+      where: {
+        groups_some: {
+          id: context.activeGroup
+        },
+        AND: {
+          contactNumber_in: contactNumbers
+        }
       }
     },
-    info
+    `{contactNumber}`
   );
 }
 
+async function _verifyPostId(postId, context) {
+  try {
+    const posts = await context.db.query.posts(
+      {
+        where: {
+          id: postId,
+          AND: {
+            group: {
+              id: context.activeGroup
+            }
+          }
+        }
+      },
+      `{id}`
+    );
+    return !!posts[0];
+  } catch (error) {
+    throw new Error('Invalid post id');
+  }
+}
+
 async function createComment(parent, args, context, info) {
+  if (!(await _verifyPostId(args.postId, context)))
+    throw new Error('Invalid post id');
   const options = {};
   options.post = { connect: { id: args.postId } };
-  options.user = { connect: { contactNumber: args.contactNumber } };
+  options.user = { connect: { id: context.userId } };
   if (args.tags_contactNumbers) {
-    options.tags = _createTags(args.tags_contactNumbers);
+    options.tags = await _createTags(args.tags_contactNumbers, context);
   }
   return await context.db.mutation.createComment(
     {
@@ -139,9 +184,10 @@ async function createComment(parent, args, context, info) {
   );
 }
 
-function _createTags(tags_contactNumbers) {
-  const arr = tags_contactNumbers.map(contactNumber => {
-    return { user: { connect: { contactNumber: contactNumber } } };
+async function _createTags(tags_contactNumbers, context) {
+  const verifiedIds = await _verifyUserId(tags_contactNumbers, context);
+  const arr = verifiedIds.map(el => {
+    return { user: { connect: { contactNumber: el.contactNumber } } };
   });
   return { create: arr };
 }
@@ -216,8 +262,8 @@ module.exports = {
   createUser,
   login,
   createGroup,
+  selectGroup,
   createPost,
-  createTag,
   createComment,
   deletePost,
   deleteComment,

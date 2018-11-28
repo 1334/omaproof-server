@@ -79,31 +79,34 @@ type User {
   comments: [Comment]
   groups: [Group]
   email: String
-  securityQuestions: String!
   contactNumber: String!
 }
 
-input SignUp {
+input UserCreation {
   name: String!
   profilePicture: String
   age: Int
-  generation: Int
-  groups: [String]
   email: String
-  securityQuestions: String!
-  securityAnswers: String!
   contactNumber: String!
 }
 
-type AuthPayload {
+type UserAuthPayload {
   token: String
   user: User
 }
 
+type GroupAuthPayload {
+  token: String
+  group: Group
+}
+
+type GroupCreationOutput {
+  token: String
+  group: Group
+}
+
 input GroupCreation {
   welcomeText: String!
-  admin_contactNumber: String!
-  users_contactNumbers: [String]
   colorScheme: String!
   description: String!
 }
@@ -124,18 +127,16 @@ input PostUpdate {
 }
 
 type Mutation {
-  createUser(data: SignUp!): AuthPayload
-  login(contactNumber: String!, securityAnswers: String!): AuthPayload
-  createGroup(data: GroupCreation!): Group
-  createTag(contactNumber: String!, contentId: String!, isPost: Boolean!): Tag
-  createPost(
-    contactNumber: String!
-    groupId: String!
-    content: ContentCreation!
-    tags_contactNumbers: [String]
-  ): Post
+  createUser(data: UserCreation): UserAuthPayload
+  login(contactNumber: String!, password: String!): UserAuthPayload
+  createGroup(
+    data: GroupCreation
+    contactNumbers: [String!]
+    adminId: String
+  ): GroupAuthPayload
+  selectGroup(groupId: String!): GroupAuthPayload
+  createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
   createComment(
-    contactNumber: String!
     postId: String!
     content: ContentCreation!
     tags_contactNumbers: [String]
