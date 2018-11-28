@@ -1,0 +1,71 @@
+type Group {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  users: [User] @relation(name: "GroupMembership")
+  posts: [Post] @relation(name: "GroupPosts", onDelete: CASCADE)
+  admin: User! @relation(name: "AdminRegistration")
+  colorScheme: String
+  welcomeText: String!
+  description: String
+}
+
+type User {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
+  profilePicture: String
+  age: Int
+  generation: Int
+  posts: [Post]
+  comments: [Comment]
+  groups: [Group] @relation(name: "GroupMembership")
+  email: String @unique
+  password: String
+  contactNumber: String! @unique
+  token: String
+}
+
+type Post {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  tags: [Tag] @relation(name: "PostTagRelation", onDelete: CASCADE)
+  contentType: CONTENT_TYPE!
+  description: String!
+  mediaUrl: String
+  published: Boolean! @default(value: "true")
+  group: Group! @relation(name: "GroupPosts")
+  comments: [Comment] @relation(name: "CommentRelation", onDelete: CASCADE)
+}
+
+type Comment {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contentType: CONTENT_TYPE!
+  description: String!
+  mediaUrl: String
+  published: Boolean! @default(value: "true")
+  user: User!
+  tags: [Tag] @relation(name: "CommentTagRelation", onDelete: CASCADE)
+  post: Post! @relation(name: "CommentRelation")
+}
+
+type Tag {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  link_post: Post @relation(name: "PostTagRelation")
+  link_comment: Comment @relation(name: "CommentTagRelation")
+  user: User!
+}
+
+enum CONTENT_TYPE {
+  NO_MEDIA
+  IMAGE
+  GIF
+  MOVIE
+}

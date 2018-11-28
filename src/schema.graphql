@@ -1,0 +1,81 @@
+# import Group from "./generated/prisma.graphql"
+# import Settings from "./generated/prisma.graphql"
+# import MetaData from "./generated/prisma.graphql"
+# import User from "./generated/prisma.graphql"
+# import Post from "./generated/prisma.graphql"
+# import Comment from "./generated/prisma.graphql"
+# import Tag from "./generated/prisma.graphql"
+# import Content from "./generated/prisma.graphql"
+# import CONTENT_TYPE from "./generated/prisma.graphql"
+
+type Query {
+  dummy: String
+}
+
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  profilePicture: String
+  age: Int
+  generation: Int
+  posts: [Post]
+  comments: [Comment]
+  groups: [Group]
+  email: String
+  contactNumber: String!
+}
+
+input UserCreation {
+  name: String!
+  profilePicture: String
+  age: Int
+  email: String
+  contactNumber: String!
+}
+
+type UserAuthPayload {
+  token: String
+  user: User
+}
+
+type GroupAuthPayload {
+  token: String
+  group: Group
+}
+
+type GroupCreationOutput {
+  token: String
+  group: Group
+}
+
+input GroupCreation {
+  welcomeText: String!
+  colorScheme: String!
+  description: String!
+}
+
+input ContentCreation {
+  contentType: CONTENT_TYPE!
+  description: String!
+  mediaUrl: String
+  published: Boolean
+}
+
+type Mutation {
+  createUser(data: UserCreation): UserAuthPayload
+  login(contactNumber: String!, password: String!): UserAuthPayload
+  createGroup(
+    data: GroupCreation
+    contactNumbers: [String!]
+    adminId: String
+  ): GroupAuthPayload
+  selectGroup(groupId: String!): GroupAuthPayload
+  createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
+  createComment(
+    postId: String!
+    content: ContentCreation!
+    tags_contactNumbers: [String]
+  ): Comment
+}
