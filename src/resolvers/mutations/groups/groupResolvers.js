@@ -1,4 +1,8 @@
 const jwt = require('jsonwebtoken');
+const {
+  verifyUserIsAdminByID,
+  verifyUserIsInGroupById
+} = require('../../helperfunctions/verifications');
 
 async function selectGroup(parent, args, context) {
   const groups = await context.db.query.groups(
@@ -70,30 +74,21 @@ async function createGroup(parent, args, context) {
 }
 
 async function deleteUserFromGroup(parent, args, context, info) {
-  const group = await context.db.query.group(
+  const isUserAdmin = verifyUserIsAdminByID(context);
+  if (!isUserAdmin) throw new Error('Invalid');
+
+  const isUserInGroup = verifyUserIsInGroupById(args.Id, context);
+  if (!isUserInGroup) throw new Error('Invalid');
+
+  return context.db.mutation.updateGroup(
     {
       where: {
         id: context.activeGroup
-      }
-    },
-    `{id users {id} admin {id}}`
-  );
-  if (
-    group.users.find(user => user.id === args.id) &&
-    context.userId === group.admin.id
-  ) {
-    return await context.db.mutation.updateGroup(
-      {
-        where: {
-          id: context.activeGroup
-        },
-        data: { users: { disconnect: { id: args.id } } }
       },
-      info
-    );
-  } else {
-    throw new Error('Invalide');
-  }
+      data: { users: { disconnect: { id: args.id } } }
+    },
+    info
+  );
 }
 
 module.exports = { selectGroup, createGroup, deleteUserFromGroup };
