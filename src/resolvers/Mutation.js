@@ -240,8 +240,8 @@ async function deleteComment(parent, args, context, info) {
     }`
   );
   if (
-    args.userId !== comment.user.id ||
-    args.activeGroup !== comment.post.group.id
+    context.userId !== comment.user.id ||
+    context.activeGroup !== comment.post.group.id
   ) {
     throw new Error('Invalide');
   } else {
@@ -271,11 +271,11 @@ async function deleteTag(parent, args, context, info) {
   );
   if (
     (tag.link_post &&
-      (tag.link_post.user.id === args.userId &&
-        tag.link_post.group.id === args.activeGroup)) ||
+      (tag.link_post.user.id === context.userId &&
+        tag.link_post.group.id === context.activeGroup)) ||
     (tag.link_comment &&
-      (tag.link_comment.user.id === args.userId &&
-        tag.link_comment.post.group.id === args.activeGroup))
+      (tag.link_comment.user.id === context.userId &&
+        tag.link_comment.post.group.id === context.activeGroup))
   ) {
     return await context.db.mutation.deleteTag(
       {
@@ -291,7 +291,7 @@ async function deleteTag(parent, args, context, info) {
 }
 
 async function deleteUser(parent, args, context, info) {
-  if (args.id === args.userId) {
+  if (args.id === context.userId) {
     return await context.db.mutation.deleteUser(
       {
         where: {
@@ -309,19 +309,19 @@ async function deleteUserFromGroup(parent, args, context, info) {
   const group = await context.db.query.group(
     {
       where: {
-        id: args.activeGroup
+        id: context.activeGroup
       }
     },
     `{id users {id} admin {id}}`
   );
   if (
     group.users.find(user => user.id === args.id) &&
-    args.userId === group.admin.id
+    context.userId === group.admin.id
   ) {
     return await context.db.mutation.updateGroup(
       {
         where: {
-          id: args.activeGroup
+          id: context.activeGroup
         },
         data: { users: { disconnect: { id: args.id } } }
       },

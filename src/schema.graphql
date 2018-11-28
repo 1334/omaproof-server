@@ -9,12 +9,12 @@
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
 type Query {
-  getGroups(where: GroupSearchInput!, UserId: String): [Group]
-  getUsers(where: UsersSearchInput!, GroupId: String): [User]
-  getPosts(where: PostsSearchInput!, GroupId: String): [Post]
-  getComments(where: CommentsSearchInput!, GroupId: String): [Comment]
-  getTagsForPosts(where: InputTagSearch!, GroupId: String): [Tag]
-  getTagsForComments(where: InputTagSearch!, GroupId: String): [Tag]
+  getGroups(where: GroupSearchInput!): [Group]
+  getUsers(where: UsersSearchInput!): [User]
+  getPosts(where: PostsSearchInput!): [Post]
+  getComments(where: CommentsSearchInput!): [Comment]
+  getTagsForPosts(where: InputTagSearch!): [Tag]
+  getTagsForComments(where: InputTagSearch!): [Tag]
 }
 
 input GroupSearchInput {
@@ -134,8 +134,8 @@ type Mutation {
     tags_contactNumbers: [String]
   ): Comment
   deletePost(id: String!): Post
-  deleteComment(id: String!, userId: String!, activeGroup: String!): Comment
-  deleteTag(id: String!, userId: String!, activeGroup: String!): Tag
-  deleteUser(id: String!, userId: String!): User
-  deleteUserFromGroup(id: String!, userId: String!, activeGroup: String!): User
+  deleteComment(id: String!): Comment
+  deleteTag(id: String!): Tag
+  deleteUser(id: String!): User
+  deleteUserFromGroup(id: String!): User
 }

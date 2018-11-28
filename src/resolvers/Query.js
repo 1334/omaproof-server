@@ -1,7 +1,7 @@
 async function getGroups(parent, args, context, info) {
   return await context.db.query.groups(
     {
-      where: { ...args.where, AND: { users_some: { id: args.UserId } } }
+      where: { ...args.where, AND: { users_some: { id: context.userId } } }
     },
     info
   );
@@ -10,7 +10,10 @@ async function getGroups(parent, args, context, info) {
 async function getUsers(parent, args, context, info) {
   return await context.db.query.users(
     {
-      where: { ...args.where, AND: { groups_some: { id: args.GroupId } } }
+      where: {
+        ...args.where,
+        AND: { groups_some: { id: context.activeGroup } }
+      }
     },
     info
   );
@@ -19,7 +22,7 @@ async function getUsers(parent, args, context, info) {
 async function getPosts(parent, args, context, info) {
   return await context.db.query.posts(
     {
-      where: { ...args.where, AND: { group: { id: args.GroupId } } }
+      where: { ...args.where, AND: { group: { id: context.activeGroup } } }
     },
     info
   );
@@ -30,7 +33,7 @@ async function getComments(parent, args, context, info) {
     {
       where: {
         ...args.where,
-        AND: { post: { group: { id: args.GroupId } } }
+        AND: { post: { group: { id: context.activeGroup } } }
       }
     },
     info
@@ -43,7 +46,7 @@ async function getTagsForPosts(parent, args, context, info) {
       where: {
         ...args.where,
         AND: {
-          link_post: { group: { id: args.GroupId } }
+          link_post: { group: { id: context.activeGroup } }
         }
       }
     },
@@ -57,7 +60,7 @@ async function getTagsForComments(parent, args, context, info) {
       where: {
         ...args.where,
         AND: {
-          link_comment: { post: { group: { id: args.GroupId } } }
+          link_comment: { post: { group: { id: context.activeGroup } } }
         }
       }
     },
