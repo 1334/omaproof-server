@@ -173,6 +173,7 @@ async function createComment(parent, args, context, info) {
   if (args.tags_contactNumbers) {
     options.tags = await _createTags(args.tags_contactNumbers, context);
   }
+
   return await context.db.mutation.createComment(
     {
       data: {
@@ -193,68 +194,142 @@ async function _createTags(tags_contactNumbers, context) {
 }
 
 async function deletePost(parent, args, context, info) {
-  const id = args.id;
-  return await context.db.mutation.deletePost(
+  const post = await context.db.query.post(
     {
       where: {
-        id: id
+        id: args.id
       }
     },
-    info
+    `{
+      id
+      group 
+        {id}
+      user 
+        {id}
+    }`
   );
-}
 
-async function deleteComment(parent, args, context, info) {
-  const id = args.id;
-  return await context.db.mutation.deleteComment(
-    {
-      where: {
-        id: id
-      }
-    },
-    info
-  );
-}
-
-async function deleteTag(parent, args, context, info) {
-  const id = args.id;
-  return await context.db.mutation.deleteTag(
-    {
-      where: {
-        id: id
-      }
-    },
-    info
-  );
-}
-
-async function deleteUser(parent, args, context, info) {
-  const id = args.id;
-  return await context.db.mutation.deleteUser(
-    {
-      where: {
-        id: id
-      }
-    },
-    info
-  );
-}
-
-async function updatePost(parent, args, context, info) {
-  if (
-    await context.db.query.posts({
-      where: { id: args.where.id, AND: { user: { id: args.UserId } } }
-    })
-  ) {
-    return await context.db.mutation.updatePost(
+  if (args.userId !== post.user.id || args.activeGroup !== post.group.id) {
+    throw new Error('Invalide');
+  } else {
+    return await context.db.mutation.deletePost(
       {
         where: {
-          ...args.where
-        },
-        data: { ...args.data }
+          id: args.id
+        }
       },
       info
     );
+  }
+}
+
+async function deleteComment(parent, args, context, info) {
+  const comment = await context.db.query.comment(
+    {
+      where: {
+        id: args.id
+      }
+    },
+    `{
+      id
+      post {
+        group 
+          {id}
+      }
+      user 
+        {id}
+    }`
+  );
+  if (
+    args.userId !== comment.user.id ||
+    args.activeGroup !== comment.post.group.id
+  ) {
+    throw new Error('Invalide');
+  } else {
+    return await context.db.mutation.deleteComment(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      info
+    );
+  }
+}
+
+async function deleteTag(parent, args, context, info) {
+  const tag = await context.db.query.tag(
+    {
+      where: {
+        id: args.id
+      }
+    },
+    `{
+      id 
+      link_post {id group {id} user {id}} 
+      link_comment {id post {group {id}} user {id}} 
+    }`
+  );
+  if (
+    (tag.link_post &&
+      (tag.link_post.user.id === args.userId &&
+        tag.link_post.group.id === args.activeGroup)) ||
+    (tag.link_comment &&
+      (tag.link_comment.user.id === args.userId &&
+        tag.link_comment.post.group.id === args.activeGroup))
+  ) {
+    return await context.db.mutation.deleteTag(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      info
+    );
+  } else {
+    throw new Error('Invalide');
+  }
+}
+
+async function deleteUser(parent, args, context, info) {
+  if (args.id === args.userId) {
+    return await context.db.mutation.deleteUser(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      info
+    );
+  } else {
+    throw new Error('Invalide');
+  }
+}
+
+async function deleteUserFromGroup(parent, args, context, info) {
+  const group = await context.db.query.group(
+    {
+      where: {
+        id: args.activeGroup
+      }
+    },
+    `{id users {id} admin {id}}`
+  );
+  if (
+    group.users.find(user => user.id === args.id) &&
+    args.userId === group.admin.id
+  ) {
+    return await context.db.mutation.updateGroup(
+      {
+        where: {
+          id: args.activeGroup
+        },
+        data: { users: { disconnect: { id: args.id } } }
+      },
+      info
+    );
+  } else {
+    throw new Error('Invalide');
   }
 }
 
@@ -269,5 +344,5 @@ module.exports = {
   deleteComment,
   deleteTag,
   deleteUser,
-  updatePost
+  deleteUserFromGroup
 };
