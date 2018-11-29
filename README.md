@@ -1,6 +1,10 @@
 # Quick introduction
 
-[ Insert project explanation]
+Testing branch for develop features
+
+Final Quality Assurance
+
+Please be aware that the prisma is linked to a testing DB.
 
 ## Key technologies
 
