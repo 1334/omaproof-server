@@ -1,17 +1,9 @@
-const {
-  getComments,
-  getPosts,
-  getTagsForComments,
-  getTagsForPosts
-} = require('./content');
-const { getGroups } = require('./groups');
-const { getUsers } = require('./users');
+const content = require('./content');
+const groups = require('./groups');
+const users = require('./users');
 
 module.exports = {
-  getGroups,
-  getUsers,
-  getPosts,
-  getComments,
-  getTagsForPosts,
-  getTagsForComments
+  ...content,
+  ...groups,
+  ...users
 };

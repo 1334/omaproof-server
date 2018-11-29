@@ -1,33 +1,9 @@
-const {
-  createPost,
-  createComment,
-  deletePost,
-  deleteComment,
-  deleteTag
-} = require('./content/contentResolvers');
-const {
-  selectGroup,
-  createGroup,
-  deleteUserFromGroup
-} = require('./groups/groupResolvers');
-const {
-  createUser,
-  login,
-  updateUser,
-  deleteUser
-} = require('./users/userResolvers');
+const contentResolvers = require('./content/contentResolvers');
+const groupResolvers = require('./groups/groupResolvers');
+const userResolvers = require('./users/userResolvers');
 
 module.exports = {
-  createUser,
-  login,
-  createGroup,
-  selectGroup,
-  createPost,
-  createComment,
-  updateUser,
-  deletePost,
-  deleteComment,
-  deleteTag,
-  deleteUser,
-  deleteUserFromGroup
+  ...contentResolvers,
+  ...groupResolvers,
+  ...userResolvers
 };
