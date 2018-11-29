@@ -9,7 +9,62 @@
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
 type Query {
-  dummy: String
+  getGroups(where: GroupSearchInput!): [Group]
+  getUsers(where: UsersSearchInput!): [User]
+  getPosts(where: PostsSearchInput!): [Post]
+  getComments(where: CommentsSearchInput!): [Comment]
+  getTagsForPosts(where: InputTagSearch!): [Tag]
+  getTagsForComments(where: InputTagSearch!): [Tag]
+}
+
+input GroupSearchInput {
+  id: String
+  users_some: InputUserUnique
+  posts_some: InputId
+  admin: InputUserUnique
+}
+
+input UsersSearchInput {
+  id: String
+  contactNumber: String
+  email: String
+  posts_some: InputId
+  groups_some: InputId
+  comments_some: InputId
+}
+
+input PostsSearchInput {
+  id: String
+  group: InputId
+  comments_some: InputId
+  user: InputUserUnique
+  tags_some: InputId
+  published: Boolean
+}
+
+input CommentsSearchInput {
+  id: String
+  user: InputUserUnique
+  tags_some: InputId
+  post: PostsSearchInput
+  published: Boolean
+}
+
+input InputTagSearch {
+  id: String
+  link_post: InputId
+  link_comment: InputId
+  user: InputUserUnique
+}
+
+input InputId {
+  id: String
+}
+
+input InputUserUnique {
+  id: String
+  contactNumber: String
+  email: String
 }
 
 type User {
@@ -33,6 +88,12 @@ input UserCreation {
   age: Int
   email: String
   contactNumber: String!
+}
+
+input UserUpdate {
+  name: String
+  profilePicture: String
+  email: String
 }
 
 type UserAuthPayload {
@@ -67,11 +128,17 @@ type Mutation {
   createUser(data: UserCreation): UserAuthPayload
   login(contactNumber: String!, password: String!): UserAuthPayload
   createGroup(data: GroupCreation, contactNumbers: [String!]): GroupAuthPayload
-  selectGroup(groupId: String!): GroupAuthPayload
+  selectGroup(id: String!): GroupAuthPayload
   createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
   createComment(
     postId: String!
     content: ContentCreation!
     tags_contactNumbers: [String]
   ): Comment
+  updateUser(data: UserUpdate, id: String): User
+  deletePost(id: String!): Post
+  deleteComment(id: String!): Comment
+  deleteTag(id: String!): Tag
+  deleteUser(id: String!): User
+  deleteUserFromGroup(id: String!): User
 }
