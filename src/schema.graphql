@@ -11,8 +11,11 @@
 type Query {
   getGroups(where: GroupSearchInput!): [Group]
   getUsers(where: UsersSearchInput!): [User]
-  getPosts(where: PostsSearchInput!): [Post]
-  getComments(where: CommentsSearchInput!): [Comment]
+  getPosts(where: PostsSearchInput!, orderBy: PostOrderByInput): [Post]
+  getComments(
+    where: CommentsSearchInput!
+    orderBy: CommentOrderByInput
+  ): [Comment]
   getTagsForPosts(where: InputTagSearch!): [Tag]
   getTagsForComments(where: InputTagSearch!): [Tag]
 }

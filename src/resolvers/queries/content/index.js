@@ -1,7 +1,8 @@
 async function getPosts(parent, args, context, info) {
   return context.db.query.posts(
     {
-      where: { ...args.where, AND: { group: { id: context.activeGroup } } }
+      where: { ...args.where, AND: { group: { id: context.activeGroup } } },
+      orderBy: args.orderBy
     },
     info
   );
@@ -13,7 +14,8 @@ async function getComments(parent, args, context, info) {
       where: {
         ...args.where,
         AND: { post: { group: { id: context.activeGroup } } }
-      }
+      },
+      orderBy: args.orderBy
     },
     info
   );
