@@ -89,8 +89,10 @@ async function verifyCommentId(context, commentId, checkUserId = false) {
         where: {
           id: commentId,
           AND: {
-            group: {
-              id: context.activeGroup
+            post: {
+              group: {
+                id: context.activeGroup
+              }
             }
           }
         }
