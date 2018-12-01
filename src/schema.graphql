@@ -9,15 +9,20 @@
 # import CONTENT_TYPE from "./generated/prisma.graphql"
 
 type Query {
-  getGroups(where: GroupSearchInput!): [Group]
-  getUsers(where: UsersSearchInput!): [User]
-  getPosts(where: PostsSearchInput!, orderBy: PostOrderByInput): [Post]
+  getGroups(where: GroupSearchInput!, token: String!): [Group]
+  getUsers(where: UsersSearchInput!, token: String!): [User]
+  getPosts(
+    where: PostsSearchInput!
+    orderBy: PostOrderByInput
+    token: String!
+  ): [Post]
   getComments(
     where: CommentsSearchInput!
     orderBy: CommentOrderByInput
+    token: String!
   ): [Comment]
-  getTagsForPosts(where: InputTagSearch!): [Tag]
-  getTagsForComments(where: InputTagSearch!): [Tag]
+  getTagsForPosts(where: InputTagSearch!, token: String!): [Tag]
+  getTagsForComments(where: InputTagSearch!, token: String!): [Tag]
 }
 
 input GroupSearchInput {
@@ -130,18 +135,27 @@ input ContentCreation {
 type Mutation {
   createUser(data: UserCreation): UserAuthPayload
   login(contactNumber: String!, password: String!): UserAuthPayload
-  createGroup(data: GroupCreation, contactNumbers: [String!]): GroupAuthPayload
-  selectGroup(id: String!): GroupAuthPayload
-  createPost(content: ContentCreation!, tags_contactNumbers: [String]): Post
+  createGroup(
+    data: GroupCreation
+    contactNumbers: [String!]
+    token: String!
+  ): GroupAuthPayload
+  selectGroup(id: String!, token: String!): GroupAuthPayload
+  createPost(
+    content: ContentCreation!
+    tags_contactNumbers: [String]
+    token: String!
+  ): Post
   createComment(
     postId: String!
     content: ContentCreation!
     tags_contactNumbers: [String]
+    token: String!
   ): Comment
-  updateUser(data: UserUpdate, id: String): User
-  deletePost(id: String!): Post
-  deleteComment(id: String!): Comment
-  deleteTag(id: String!): Tag
-  deleteUser(id: String!): User
-  deleteUserFromGroup(id: String!): User
+  updateUser(data: UserUpdate, id: String, token: String!): User
+  deletePost(id: String!, token: String!): Post
+  deleteComment(id: String!, token: String!): Comment
+  deleteTag(id: String!, token: String!): Tag
+  deleteUser(id: String!, token: String!): User
+  deleteUserFromGroup(id: String!, token: String!): User
 }
