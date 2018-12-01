@@ -32,19 +32,21 @@ async function createGroup(parent, args, context) {
   const newUserContactNumbers = [];
   const oldUserContactNumbers = [];
   const admin = { id: context.userId };
-  for (let index = 0; index < args.contactNumbers.length; index++) {
-    const number = args.contactNumbers[index];
-    const user = await context.db.query.user(
-      {
-        where: {
-          contactNumber: number
-        }
-      },
-      `{id}`
-    );
-    user
-      ? oldUserContactNumbers.push({ contactNumber: number })
-      : newUserContactNumbers.push({ contactNumber: number });
+  if (args.contactNumbers) {
+    for (let index = 0; index < args.contactNumbers.length; index++) {
+      const number = args.contactNumbers[index];
+      const user = await context.db.query.user(
+        {
+          where: {
+            contactNumber: number
+          }
+        },
+        `{id}`
+      );
+      user
+        ? oldUserContactNumbers.push({ contactNumber: number })
+        : newUserContactNumbers.push({ contactNumber: number });
+    }
   }
 
   const group = await context.db.mutation.createGroup(
