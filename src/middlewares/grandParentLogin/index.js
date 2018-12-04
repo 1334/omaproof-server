@@ -41,6 +41,8 @@ const grandParentAuthentication = (resolve, root, args, context, info) => {
   });
 };
 
+const grandParentCreation = (resolve, root, args, context, info) => {};
+
 module.exports = {
   grandParentAuthentication
 };

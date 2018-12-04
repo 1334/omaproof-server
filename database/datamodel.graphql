@@ -5,7 +5,6 @@ type Group {
   users: [User] @relation(name: "GroupMembership")
   posts: [Post] @relation(name: "GroupPosts", onDelete: CASCADE)
   admin: User! @relation(name: "AdminRegistration")
-  colorScheme: String
   welcomeText: String!
   description: String
 }
@@ -15,9 +14,9 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String
-  profilePicture: String
-  age: Int
-  generation: Int
+  picture: String
+  yearOfBirth: Int
+  monthOfBirth: Int
   posts: [Post]
   comments: [Comment]
   groups: [Group] @relation(name: "GroupMembership")

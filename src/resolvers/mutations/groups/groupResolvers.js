@@ -33,7 +33,7 @@ async function createGroup(parent, args, context) {
   const oldUserContactNumbers = [];
   const admin = { id: context.userId };
   for (let index = 0; index < args.members.length; index++) {
-    const number = args.members[index].contactNumbers;
+    const number = args.members[index].contactNumber;
     const user = await context.db.query.user(
       {
         where: {

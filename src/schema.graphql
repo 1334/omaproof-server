@@ -96,7 +96,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String
-  profilePicture: String
+  picture: String
   age: Int
   generation: Int
   posts: [Post]
@@ -108,7 +108,7 @@ type User {
 
 input UserCreation {
   name: String!
-  profilePicture: String!
+  picture: String!
   monthOfBirth: Int!
   yearOfBirth: Int!
   contactNumber: String!
@@ -116,7 +116,7 @@ input UserCreation {
 
 input UserUpdate {
   name: String
-  profilePicture: String
+  picture: String
   email: String
 }
 
@@ -137,7 +137,6 @@ type GroupCreationOutput {
 
 input GroupCreation {
   welcomeText: String!
-  colorScheme: String!
   description: String!
 }
 
