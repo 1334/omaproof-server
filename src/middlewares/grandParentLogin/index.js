@@ -10,17 +10,8 @@ const grandParentAuthentication = (resolve, root, args, context, info) => {
     token: token,
     answers: answers
   });
-  // open
-  //   .then(conn => conn.createChannel())
-  //   .then(channel => {
-  //     channel.assertQueue('', { exclusive: true })
-  //     .then((err,q) => {
-  //       channel.consume(q.queue)
-  //     })
-  //   })
-  //   .then();
 
-  return new Promise((promiseResolve, promiseReject) => {
+  return new Promise(promiseResolve => {
     amqp.connect(
       'amqp://localhost',
       function(err, conn) {

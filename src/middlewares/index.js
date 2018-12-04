@@ -23,12 +23,20 @@ const authentication = {
     getPosts: groupAuthentication,
     getComments: groupAuthentication,
     getTagsForPosts: groupAuthentication,
-    getTagsForComments: groupAuthentication,
+    getTagsForComments: groupAuthentication
+  }
+};
+
+const questionService = {
+  Mutation: {
+    createGroup: userAuthentication
+  },
+  Query: {
     grandParentLogin: grandParentAuthentication
   }
 };
 
-const middlewares = [authentication];
+const middlewares = [authentication, questionService];
 
 module.exports = {
   middlewares
