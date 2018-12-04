@@ -41,8 +41,51 @@ const grandParentAuthentication = (resolve, root, args, context, info) => {
   });
 };
 
-const grandParentCreation = (resolve, root, args, context, info) => {};
+const grandParentCreation = async (resolve, root, args, context, info) => {
+  const result = await resolve(root, args, context, info);
+  const { kids } = args;
+  const sendPackage = {};
+  const group = await context.db.query.group(
+    { where: { id: result.group.id } },
+    `{users {id generation name yearOfBirth monthOfBirth picture contactNumber}}`
+  );
+  const grandParents = group.filter(el => el.generation === 'GRANDPARENT');
+  sendPackage.grandParents = grandParents.map(el => {
+    return {
+      userId: el.id,
+      firstname: el.name,
+      yearOfBirth: el.yearOfBirth,
+      monthOfBirth: el.monthOfBirth,
+      contactNumber: el.contactNumber
+    };
+  });
+  sendPackage.kids = kids.map(el => {
+    return {
+      firstname: el.name,
+      yearOfBirth: el.yearOfBirth,
+      monthOfBirth: el.monthOfBirth,
+      picture: el.picture
+    };
+  });
+  console.log(sendPackage);
+  _sendPackageToRabbit(sendPackage);
+  return result;
+};
+
+const _sendPackageToRabbit = sendPackage => {
+  amqp.connect(
+    'amqp://localhost',
+    function(err, conn) {
+      conn.createChannel(function(err, ch) {
+        var q = 'createGroup';
+        ch.assertQueue(q, { durable: false });
+        ch.sendToQueue(q, Buffer.from(JSON.stringify(sendPackage)));
+      });
+    }
+  );
+};
 
 module.exports = {
-  grandParentAuthentication
+  grandParentAuthentication,
+  grandParentCreation
 };

@@ -2,7 +2,10 @@ const {
   userAuthentication,
   groupAuthentication
 } = require('./authentication/');
-const { grandParentAuthentication } = require('./grandParentLogin');
+const {
+  grandParentAuthentication,
+  grandParentCreation
+} = require('./grandParentLogin');
 
 const authentication = {
   Mutation: {
@@ -29,7 +32,7 @@ const authentication = {
 
 const questionService = {
   Mutation: {
-    createGroup: userAuthentication
+    createGroup: grandParentCreation
   },
   Query: {
     grandParentLogin: grandParentAuthentication

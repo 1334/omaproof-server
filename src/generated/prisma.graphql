@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/frederikhermans/omaproof/dev
-# timestamp: Tue Dec 04 2018 20:04:15 GMT+0100 (Central European Standard Time)
+# timestamp: Tue Dec 04 2018 20:49:32 GMT+0100 (Central European Standard Time)
 
 type AggregateComment {
   count: Int!
@@ -685,6 +685,12 @@ enum CONTENT_TYPE {
 }
 
 scalar DateTime
+
+enum GENERATION_TYPE {
+  CHILD
+  PARENT
+  GRANDPARENT
+}
 
 type Group implements Node {
   id: ID!
@@ -2408,6 +2414,7 @@ type User implements Node {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group!]
@@ -2432,6 +2439,7 @@ input UserCreateInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String!
@@ -2466,6 +2474,7 @@ input UserCreateWithoutCommentsInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String!
@@ -2479,6 +2488,7 @@ input UserCreateWithoutGroupsInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String!
@@ -2492,6 +2502,7 @@ input UserCreateWithoutPostsInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String!
@@ -2524,6 +2535,8 @@ enum UserOrderByInput {
   yearOfBirth_DESC
   monthOfBirth_ASC
   monthOfBirth_DESC
+  generation_ASC
+  generation_DESC
   email_ASC
   email_DESC
   password_ASC
@@ -2542,6 +2555,7 @@ type UserPreviousValues {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String!
@@ -2765,6 +2779,16 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   monthOfBirth_gte: Int
+  generation: GENERATION_TYPE
+
+  """All values that are not equal to given value."""
+  generation_not: GENERATION_TYPE
+
+  """All values that are contained in given list."""
+  generation_in: [GENERATION_TYPE!]
+
+  """All values that are not contained in given list."""
+  generation_not_in: [GENERATION_TYPE!]
   email: String
 
   """All values that are not equal to given value."""
@@ -2971,6 +2995,7 @@ input UserUpdateDataInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -2985,6 +3010,7 @@ input UserUpdateInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -2999,6 +3025,7 @@ input UserUpdateManyDataInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -3010,6 +3037,7 @@ input UserUpdateManyMutationInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -3058,6 +3086,7 @@ input UserUpdateWithoutCommentsDataInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -3071,6 +3100,7 @@ input UserUpdateWithoutGroupsDataInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -3084,6 +3114,7 @@ input UserUpdateWithoutPostsDataInput {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   email: String
   password: String
   contactNumber: String
@@ -3335,6 +3366,16 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   monthOfBirth_gte: Int
+  generation: GENERATION_TYPE
+
+  """All values that are not equal to given value."""
+  generation_not: GENERATION_TYPE
+
+  """All values that are contained in given list."""
+  generation_in: [GENERATION_TYPE!]
+
+  """All values that are not contained in given list."""
+  generation_not_in: [GENERATION_TYPE!]
   email: String
 
   """All values that are not equal to given value."""

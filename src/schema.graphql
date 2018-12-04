@@ -7,6 +7,7 @@
 # import Tag from "./generated/prisma.graphql"
 # import Content from "./generated/prisma.graphql"
 # import CONTENT_TYPE from "./generated/prisma.graphql"
+# import GENERATION_TYPE from "./generated/prisma.graphql"
 
 type Query {
   getGroups(where: GroupSearchInput!, token: String!): [Group]
@@ -112,6 +113,7 @@ input UserCreation {
   monthOfBirth: Int!
   yearOfBirth: Int!
   contactNumber: String!
+  generation: GENERATION_TYPE
 }
 
 input UserUpdate {

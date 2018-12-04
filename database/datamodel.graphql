@@ -17,6 +17,7 @@ type User {
   picture: String
   yearOfBirth: Int
   monthOfBirth: Int
+  generation: GENERATION_TYPE
   posts: [Post]
   comments: [Comment]
   groups: [Group] @relation(name: "GroupMembership")
@@ -67,4 +68,10 @@ enum CONTENT_TYPE {
   IMAGE
   GIF
   MOVIE
+}
+
+enum GENERATION_TYPE {
+  CHILD
+  PARENT
+  GRANDPARENT
 }
