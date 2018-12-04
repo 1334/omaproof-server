@@ -13,7 +13,7 @@ async function getUsers(parent, args, context, info) {
 async function grandParentLogin(parent, args, context, info) {
   const { token, question } = context.rabbitResponse;
   const { options, type } = question;
-  console.log(context.rabbitResponse);
+  console.log(options, type, token);
   return {
     token,
     question: {
