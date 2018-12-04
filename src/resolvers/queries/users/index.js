@@ -10,6 +10,20 @@ async function getUsers(parent, args, context, info) {
   );
 }
 
+async function grandParentLogin(parent, args, context, info) {
+  const { token, question } = context.rabbitResponse;
+  const { options, type } = question;
+  console.log(context.rabbitResponse);
+  return {
+    token,
+    question: {
+      options,
+      type
+    }
+  };
+}
+
 module.exports = {
-  getUsers
+  getUsers,
+  grandParentLogin
 };

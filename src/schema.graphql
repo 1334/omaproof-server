@@ -23,6 +23,22 @@ type Query {
   ): [Comment]
   getTagsForPosts(where: InputTagSearch!, token: String!): [Tag]
   getTagsForComments(where: InputTagSearch!, token: String!): [Tag]
+  grandParentLogin(sessionToken: String, answers: Answers): GrandParentLogin
+}
+
+input Answers {
+  selected: [String]
+  unselected: [String]
+}
+
+type GrandParentLogin {
+  token: String
+  question: Question
+}
+
+type Question {
+  options: [String!]!
+  type: String!
 }
 
 input GroupSearchInput {

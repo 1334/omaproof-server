@@ -2,6 +2,7 @@ const {
   userAuthentication,
   groupAuthentication
 } = require('./authentication/');
+const { grandParentAuthentication } = require('./grandParentLogin');
 
 const authentication = {
   Mutation: {
@@ -22,7 +23,8 @@ const authentication = {
     getPosts: groupAuthentication,
     getComments: groupAuthentication,
     getTagsForPosts: groupAuthentication,
-    getTagsForComments: groupAuthentication
+    getTagsForComments: groupAuthentication,
+    grandParentLogin: grandParentAuthentication
   }
 };
 

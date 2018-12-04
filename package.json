@@ -22,6 +22,7 @@
     "prettier": "^1.15.2"
   },
   "dependencies": {
+    "amqplib": "^0.5.3",
     "bcryptjs": "^2.4.3",
     "binding": "^3.0.3",
     "dotenv": "^6.1.0",
