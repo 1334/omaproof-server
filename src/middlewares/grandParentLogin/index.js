@@ -43,13 +43,15 @@ const grandParentAuthentication = (resolve, root, args, context, info) => {
 
 const grandParentCreation = async (resolve, root, args, context, info) => {
   const result = await resolve(root, args, context, info);
-  const { kids } = args;
+  const { grandChildren } = args;
   const sendPackage = {};
   const group = await context.db.query.group(
     { where: { id: result.group.id } },
     `{users {id generation name yearOfBirth monthOfBirth picture contactNumber}}`
   );
-  const grandParents = group.filter(el => el.generation === 'GRANDPARENT');
+  const grandParents = group.users.filter(
+    el => el.generation === 'GRANDPARENT'
+  );
   sendPackage.grandParents = grandParents.map(el => {
     return {
       userId: el.id,
@@ -59,7 +61,7 @@ const grandParentCreation = async (resolve, root, args, context, info) => {
       contactNumber: el.contactNumber
     };
   });
-  sendPackage.kids = kids.map(el => {
+  sendPackage.kids = grandChildren.map(el => {
     return {
       firstname: el.name,
       yearOfBirth: el.yearOfBirth,
@@ -67,7 +69,6 @@ const grandParentCreation = async (resolve, root, args, context, info) => {
       picture: el.picture
     };
   });
-  console.log(sendPackage);
   _sendPackageToRabbit(sendPackage);
   return result;
 };
