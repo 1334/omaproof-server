@@ -32,9 +32,7 @@ const authentication = {
 
 const questionService = {
   Mutation: {
-    createGroup: grandParentCreation
-  },
-  Query: {
+    createGroup: grandParentCreation,
     grandParentLogin: grandParentAuthentication
   }
 };

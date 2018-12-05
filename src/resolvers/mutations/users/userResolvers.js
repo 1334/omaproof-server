@@ -82,4 +82,26 @@ async function deleteUser(parent, args, context, info) {
   );
 }
 
-module.exports = { createUser, login, updateUser, deleteUser };
+async function grandParentLogin(parent, args, context) {
+  const { sessionToken, question } = context.rabbitResponse;
+  const { options, type } = question;
+  console.log('heeey: ', context.rabbitResponse);
+  if (type === 'success') {
+    console.log('YIPPIEE');
+  }
+  return {
+    token: sessionToken,
+    question: {
+      options,
+      type
+    }
+  };
+}
+
+module.exports = {
+  createUser,
+  login,
+  updateUser,
+  deleteUser,
+  grandParentLogin
+};
