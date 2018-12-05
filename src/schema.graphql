@@ -26,7 +26,8 @@ type Query {
   getTagsForComments(where: InputTagSearch!, token: String!): [Tag]
 }
 
-input Answers {
+input Answer {
+  type: String
   selected: [String]
   unselected: [String]
 }
@@ -175,5 +176,5 @@ type Mutation {
   deleteTag(id: String!, token: String!): Tag
   deleteUser(id: String!, token: String!): User
   deleteUserFromGroup(id: String!, token: String!): User
-  grandParentLogin(sessionToken: String, answers: Answers): GrandParentLogin
+  grandParentLogin(sessionToken: String, answer: Answer): GrandParentLogin
 }

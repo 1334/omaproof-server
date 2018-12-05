@@ -85,9 +85,18 @@ async function deleteUser(parent, args, context, info) {
 async function grandParentLogin(parent, args, context) {
   const { sessionToken, question } = context.rabbitResponse;
   const { options, type } = question;
-  console.log('heeey: ', context.rabbitResponse);
   if (type === 'success') {
-    console.log('YIPPIEE');
+    const succesToken = jwt.sign(
+      { userId: options[0], activeGroup: null },
+      process.env.APP_SECRET
+    );
+    return {
+      token: succesToken,
+      question: {
+        options,
+        type
+      }
+    };
   }
   return {
     token: sessionToken,

@@ -4,13 +4,13 @@ const uuidv4 = require('uuid/v4');
 //const open = require('amqplib').connect('amqp://localhost');
 
 const grandParentAuthentication = (resolve, root, args, context, info) => {
-  const { token, answers } = args;
+  const { sessionToken, answer } = args;
   let result;
   let sendPackage = JSON.stringify({
-    token: token,
-    answers: answers
+    token: sessionToken,
+    answer: answer
   });
-
+  console.log('package: ', sendPackage);
   return new Promise(promiseResolve => {
     amqp.connect(
       'amqp://localhost',
