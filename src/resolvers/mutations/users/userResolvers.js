@@ -82,4 +82,35 @@ async function deleteUser(parent, args, context, info) {
   );
 }
 
-module.exports = { createUser, login, updateUser, deleteUser };
+async function grandParentLogin(parent, args, context) {
+  const { sessionToken, question } = context.rabbitResponse;
+  const { options, type } = question;
+  if (type === 'success') {
+    const succesToken = jwt.sign(
+      { userId: options[0], activeGroup: null },
+      process.env.APP_SECRET
+    );
+    return {
+      token: succesToken,
+      question: {
+        options,
+        type
+      }
+    };
+  }
+  return {
+    token: sessionToken,
+    question: {
+      options,
+      type
+    }
+  };
+}
+
+module.exports = {
+  createUser,
+  login,
+  updateUser,
+  deleteUser,
+  grandParentLogin
+};

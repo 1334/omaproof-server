@@ -15,8 +15,8 @@ type User {
   updatedAt: DateTime!
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   posts: [Post]
   comments: [Comment]

@@ -10,23 +10,6 @@ async function getUsers(parent, args, context, info) {
   );
 }
 
-async function grandParentLogin(parent, args, context) {
-  const { sessionToken, question } = context.rabbitResponse;
-  const { options, type } = question;
-  console.log('heeey: ', context.rabbitResponse);
-  if (type === 'success') {
-    console.log('YIPPIEE');
-  }
-  return {
-    token: sessionToken,
-    question: {
-      options,
-      type
-    }
-  };
-}
-
 module.exports = {
-  getUsers,
-  grandParentLogin
+  getUsers
 };

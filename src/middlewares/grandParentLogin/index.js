@@ -4,19 +4,22 @@ const uuidv4 = require('uuid/v4');
 //const open = require('amqplib').connect('amqp://localhost');
 
 const grandParentAuthentication = (resolve, root, args, context, info) => {
-  const { token, answers } = args;
+  const { sessionToken, answer } = args;
   let result;
   let sendPackage = JSON.stringify({
-    token: token,
-    answers: answers
+    token: sessionToken,
+    answer: answer
   });
-
+  console.log('package: ', sendPackage);
   return new Promise(promiseResolve => {
     amqp.connect(
       'amqp://localhost',
       function(err, conn) {
         conn.createChannel(function(err, ch) {
-          ch.assertQueue('', { exclusive: true }, function(err, q) {
+          ch.assertQueue('', { exclusive: true, autoDelete: true }, function(
+            err,
+            q
+          ) {
             var corr = uuidv4();
             ch.consume(
               q.queue,
@@ -56,16 +59,16 @@ const grandParentCreation = async (resolve, root, args, context, info) => {
     return {
       userId: el.id,
       firstname: el.name,
-      yearOfBirth: el.yearOfBirth,
-      monthOfBirth: el.monthOfBirth,
+      yearOfBirth: el.yearOfBirth.toLowerCase(),
+      monthOfBirth: el.monthOfBirth.toLowerCase(),
       contactNumber: el.contactNumber
     };
   });
   sendPackage.kids = grandChildren.map(el => {
     return {
       firstname: el.name,
-      yearOfBirth: el.yearOfBirth,
-      monthOfBirth: el.monthOfBirth,
+      yearOfBirth: el.yearOfBirth.toLowerCase(),
+      monthOfBirth: el.monthOfBirth.toLowerCase(),
       picture: el.picture
     };
   });

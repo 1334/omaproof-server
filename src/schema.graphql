@@ -24,10 +24,10 @@ type Query {
   ): [Comment]
   getTagsForPosts(where: InputTagSearch!, token: String!): [Tag]
   getTagsForComments(where: InputTagSearch!, token: String!): [Tag]
-  grandParentLogin(sessionToken: String, answers: Answers): GrandParentLogin
 }
 
-input Answers {
+input Answer {
+  type: String
   selected: [String]
   unselected: [String]
 }
@@ -98,20 +98,22 @@ type User {
   updatedAt: DateTime!
   name: String
   picture: String
-  age: Int
-  generation: Int
+  yearOfBirth: String
+  monthOfBirth: String
+  generation: GENERATION_TYPE
   posts: [Post]
   comments: [Comment]
   groups: [Group]
   email: String
   contactNumber: String!
+  token: String
 }
 
 input UserCreation {
   name: String!
   picture: String!
-  monthOfBirth: Int!
-  yearOfBirth: Int!
+  monthOfBirth: String!
+  yearOfBirth: String!
   contactNumber: String!
   generation: GENERATION_TYPE
 }
@@ -176,4 +178,5 @@ type Mutation {
   deleteTag(id: String!, token: String!): Tag
   deleteUser(id: String!, token: String!): User
   deleteUserFromGroup(id: String!, token: String!): User
+  grandParentLogin(sessionToken: String, answer: Answer): GrandParentLogin
 }
