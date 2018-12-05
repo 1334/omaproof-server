@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/frederikhermans/omaproof/dev
-# timestamp: Tue Dec 04 2018 20:49:32 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Dec 05 2018 17:57:03 GMT+0100 (Central European Standard Time)
 
 type AggregateComment {
   count: Int!
@@ -2412,8 +2412,8 @@ type User implements Node {
   updatedAt: DateTime!
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
@@ -2437,8 +2437,8 @@ type UserConnection {
 input UserCreateInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -2472,8 +2472,8 @@ input UserCreateOneWithoutPostsInput {
 input UserCreateWithoutCommentsInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -2486,8 +2486,8 @@ input UserCreateWithoutCommentsInput {
 input UserCreateWithoutGroupsInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -2500,8 +2500,8 @@ input UserCreateWithoutGroupsInput {
 input UserCreateWithoutPostsInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -2553,8 +2553,8 @@ type UserPreviousValues {
   updatedAt: DateTime!
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -2735,50 +2735,86 @@ input UserScalarWhereInput {
 
   """All values not ending with the given string."""
   picture_not_ends_with: String
-  yearOfBirth: Int
+  yearOfBirth: String
 
   """All values that are not equal to given value."""
-  yearOfBirth_not: Int
+  yearOfBirth_not: String
 
   """All values that are contained in given list."""
-  yearOfBirth_in: [Int!]
+  yearOfBirth_in: [String!]
 
   """All values that are not contained in given list."""
-  yearOfBirth_not_in: [Int!]
+  yearOfBirth_not_in: [String!]
 
   """All values less than the given value."""
-  yearOfBirth_lt: Int
+  yearOfBirth_lt: String
 
   """All values less than or equal the given value."""
-  yearOfBirth_lte: Int
+  yearOfBirth_lte: String
 
   """All values greater than the given value."""
-  yearOfBirth_gt: Int
+  yearOfBirth_gt: String
 
   """All values greater than or equal the given value."""
-  yearOfBirth_gte: Int
-  monthOfBirth: Int
+  yearOfBirth_gte: String
+
+  """All values containing the given string."""
+  yearOfBirth_contains: String
+
+  """All values not containing the given string."""
+  yearOfBirth_not_contains: String
+
+  """All values starting with the given string."""
+  yearOfBirth_starts_with: String
+
+  """All values not starting with the given string."""
+  yearOfBirth_not_starts_with: String
+
+  """All values ending with the given string."""
+  yearOfBirth_ends_with: String
+
+  """All values not ending with the given string."""
+  yearOfBirth_not_ends_with: String
+  monthOfBirth: String
 
   """All values that are not equal to given value."""
-  monthOfBirth_not: Int
+  monthOfBirth_not: String
 
   """All values that are contained in given list."""
-  monthOfBirth_in: [Int!]
+  monthOfBirth_in: [String!]
 
   """All values that are not contained in given list."""
-  monthOfBirth_not_in: [Int!]
+  monthOfBirth_not_in: [String!]
 
   """All values less than the given value."""
-  monthOfBirth_lt: Int
+  monthOfBirth_lt: String
 
   """All values less than or equal the given value."""
-  monthOfBirth_lte: Int
+  monthOfBirth_lte: String
 
   """All values greater than the given value."""
-  monthOfBirth_gt: Int
+  monthOfBirth_gt: String
 
   """All values greater than or equal the given value."""
-  monthOfBirth_gte: Int
+  monthOfBirth_gte: String
+
+  """All values containing the given string."""
+  monthOfBirth_contains: String
+
+  """All values not containing the given string."""
+  monthOfBirth_not_contains: String
+
+  """All values starting with the given string."""
+  monthOfBirth_starts_with: String
+
+  """All values not starting with the given string."""
+  monthOfBirth_not_starts_with: String
+
+  """All values ending with the given string."""
+  monthOfBirth_ends_with: String
+
+  """All values not ending with the given string."""
+  monthOfBirth_not_ends_with: String
   generation: GENERATION_TYPE
 
   """All values that are not equal to given value."""
@@ -2993,8 +3029,8 @@ input UserSubscriptionWhereInput {
 input UserUpdateDataInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3008,8 +3044,8 @@ input UserUpdateDataInput {
 input UserUpdateInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3023,8 +3059,8 @@ input UserUpdateInput {
 input UserUpdateManyDataInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3035,8 +3071,8 @@ input UserUpdateManyDataInput {
 input UserUpdateManyMutationInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3084,8 +3120,8 @@ input UserUpdateOneRequiredWithoutPostsInput {
 input UserUpdateWithoutCommentsDataInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3098,8 +3134,8 @@ input UserUpdateWithoutCommentsDataInput {
 input UserUpdateWithoutGroupsDataInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3112,8 +3148,8 @@ input UserUpdateWithoutGroupsDataInput {
 input UserUpdateWithoutPostsDataInput {
   name: String
   picture: String
-  yearOfBirth: Int
-  monthOfBirth: Int
+  yearOfBirth: String
+  monthOfBirth: String
   generation: GENERATION_TYPE
   email: String
   password: String
@@ -3322,50 +3358,86 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   picture_not_ends_with: String
-  yearOfBirth: Int
+  yearOfBirth: String
 
   """All values that are not equal to given value."""
-  yearOfBirth_not: Int
+  yearOfBirth_not: String
 
   """All values that are contained in given list."""
-  yearOfBirth_in: [Int!]
+  yearOfBirth_in: [String!]
 
   """All values that are not contained in given list."""
-  yearOfBirth_not_in: [Int!]
+  yearOfBirth_not_in: [String!]
 
   """All values less than the given value."""
-  yearOfBirth_lt: Int
+  yearOfBirth_lt: String
 
   """All values less than or equal the given value."""
-  yearOfBirth_lte: Int
+  yearOfBirth_lte: String
 
   """All values greater than the given value."""
-  yearOfBirth_gt: Int
+  yearOfBirth_gt: String
 
   """All values greater than or equal the given value."""
-  yearOfBirth_gte: Int
-  monthOfBirth: Int
+  yearOfBirth_gte: String
+
+  """All values containing the given string."""
+  yearOfBirth_contains: String
+
+  """All values not containing the given string."""
+  yearOfBirth_not_contains: String
+
+  """All values starting with the given string."""
+  yearOfBirth_starts_with: String
+
+  """All values not starting with the given string."""
+  yearOfBirth_not_starts_with: String
+
+  """All values ending with the given string."""
+  yearOfBirth_ends_with: String
+
+  """All values not ending with the given string."""
+  yearOfBirth_not_ends_with: String
+  monthOfBirth: String
 
   """All values that are not equal to given value."""
-  monthOfBirth_not: Int
+  monthOfBirth_not: String
 
   """All values that are contained in given list."""
-  monthOfBirth_in: [Int!]
+  monthOfBirth_in: [String!]
 
   """All values that are not contained in given list."""
-  monthOfBirth_not_in: [Int!]
+  monthOfBirth_not_in: [String!]
 
   """All values less than the given value."""
-  monthOfBirth_lt: Int
+  monthOfBirth_lt: String
 
   """All values less than or equal the given value."""
-  monthOfBirth_lte: Int
+  monthOfBirth_lte: String
 
   """All values greater than the given value."""
-  monthOfBirth_gt: Int
+  monthOfBirth_gt: String
 
   """All values greater than or equal the given value."""
-  monthOfBirth_gte: Int
+  monthOfBirth_gte: String
+
+  """All values containing the given string."""
+  monthOfBirth_contains: String
+
+  """All values not containing the given string."""
+  monthOfBirth_not_contains: String
+
+  """All values starting with the given string."""
+  monthOfBirth_starts_with: String
+
+  """All values not starting with the given string."""
+  monthOfBirth_not_starts_with: String
+
+  """All values ending with the given string."""
+  monthOfBirth_ends_with: String
+
+  """All values not ending with the given string."""
+  monthOfBirth_not_ends_with: String
   generation: GENERATION_TYPE
 
   """All values that are not equal to given value."""
