@@ -7,6 +7,7 @@
 # import Tag from "./generated/prisma.graphql"
 # import Content from "./generated/prisma.graphql"
 # import CONTENT_TYPE from "./generated/prisma.graphql"
+# import GENERATION_TYPE from "./generated/prisma.graphql"
 
 type Query {
   getGroups(where: GroupSearchInput!, token: String!): [Group]
@@ -23,6 +24,22 @@ type Query {
   ): [Comment]
   getTagsForPosts(where: InputTagSearch!, token: String!): [Tag]
   getTagsForComments(where: InputTagSearch!, token: String!): [Tag]
+  grandParentLogin(sessionToken: String, answers: Answers): GrandParentLogin
+}
+
+input Answers {
+  selected: [String]
+  unselected: [String]
+}
+
+type GrandParentLogin {
+  token: String
+  question: Question
+}
+
+type Question {
+  options: [String!]!
+  type: String!
 }
 
 input GroupSearchInput {
@@ -80,7 +97,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String
-  profilePicture: String
+  picture: String
   age: Int
   generation: Int
   posts: [Post]
@@ -92,15 +109,16 @@ type User {
 
 input UserCreation {
   name: String!
-  profilePicture: String
-  age: Int
-  email: String
+  picture: String!
+  monthOfBirth: Int!
+  yearOfBirth: Int!
   contactNumber: String!
+  generation: GENERATION_TYPE
 }
 
 input UserUpdate {
   name: String
-  profilePicture: String
+  picture: String
   email: String
 }
 
@@ -121,7 +139,6 @@ type GroupCreationOutput {
 
 input GroupCreation {
   welcomeText: String!
-  colorScheme: String!
   description: String!
 }
 
@@ -137,7 +154,8 @@ type Mutation {
   login(contactNumber: String!, password: String!): UserAuthPayload
   createGroup(
     data: GroupCreation
-    contactNumbers: [String!]
+    members: [UserCreation!]!
+    grandChildren: [UserCreation!]!
     token: String!
   ): GroupAuthPayload
   selectGroup(id: String!, token: String!): GroupAuthPayload

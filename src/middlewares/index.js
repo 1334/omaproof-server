@@ -2,6 +2,10 @@ const {
   userAuthentication,
   groupAuthentication
 } = require('./authentication/');
+const {
+  grandParentAuthentication,
+  grandParentCreation
+} = require('./grandParentLogin');
 
 const authentication = {
   Mutation: {
@@ -26,7 +30,16 @@ const authentication = {
   }
 };
 
-const middlewares = [authentication];
+const questionService = {
+  Mutation: {
+    createGroup: grandParentCreation
+  },
+  Query: {
+    grandParentLogin: grandParentAuthentication
+  }
+};
+
+const middlewares = [authentication, questionService];
 
 module.exports = {
   middlewares
