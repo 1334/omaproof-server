@@ -1,17 +1,50 @@
-# Quick introduction
+<p align="center">
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544534611/screenshots/omaproof/logo-b-large.png" width="250px">
+</p>
 
-[ Insert project explanation]
+_A family friendly way to connect_
 
-## Key technologies
+Do you have a family group on WhatsApp? Do you feel like you should share more with your family, but find the major social networks too public?
+Omaproof aims to provide a secure, easy to use, structured social network dedicated to your family.
 
-GraphQl (+yoga)
-Prisma
+## Screenshots
 
-## Key tutorial
+<p align="center">
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544519942/screenshots/omaproof/home.png" width="250px"> &nbsp;&nbsp;
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544519938/screenshots/omaproof/register.png" width="250px"> &nbsp;&nbsp;
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544519941/screenshots/omaproof/feed.png" width="250px"> &nbsp;&nbsp;
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544519937/screenshots/omaproof/month.png" width="250px"> &nbsp;&nbsp;
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544519937/screenshots/omaproof/names.png" width="250px"> &nbsp;&nbsp;
+<img src="https://res.cloudinary.com/errstate/image/upload/v1544519938/screenshots/omaproof/pics.png" width="250px"> &nbsp;&nbsp;
+</p>
 
-https://www.howtographql.com/graphql-js
+## Installation
 
-## prisma setup
+To run the app you need to clone the [omaproof-client](https://github.com/1334/omaproof-client), [omaproof-server](https://github.com/1334/omaproof-server) and [omaproof-auth](https://github.com/1334/omaproof-auth) repositories.
+
+### Client
+
+```
+git clone https://github.com/1334/omaproof-client
+cd  omaproof-client
+npm install
+
+# to run it
+npm start
+```
+
+### Server
+
+```
+git clone https://github.com/1334/omaproof-server
+cd  omaproof-server
+npm install
+
+# to run it
+nodemon src/index.js
+```
+
+### Prisma
 
 Setup files for graphQl and prisma are .yml
 
@@ -43,26 +76,34 @@ the command starts an interactive process:
 
 Once the command has finished running, the CLI outputs the endpoint for the Prisma GraphQL API. It will look somewhat similar to this: https://eu1.prisma.sh/public-graytracker-771/hackernews-node/dev.
 
-Here’s how the URL is composed:
+### Auth
 
-eu.prisma.sh: The domain of your cluster
-public-graytracker-771: A randomly generated ID for your service
-name: The service name from prisma.yml
-dev: The deployment stage from prisma.yml
-In future deploys (e.g. after you made changes to the data model), you won’t be prompted where to deploy the service any more - the CLI will read the endpoint URL from prisma.yml
+```
+# install rabbitMQ, on MacOs
+brew install rabbitmq
 
-## Using the playground for prisma
+git clone https://github.com/1334/omaproof-auth
+cd  omaproof-auth
+npm install
 
-In order to be able to explore the database from the playground authentication is required.
-
-get the token using the cli-command: `prisma token`
-
-Add the following to the http header section in the bottom left corner
-
-```javascript
-{
-"Authorization": "Bearer **TOKEN**"
-}
+# to run it
+rabbitmq-server # start the rabitMQ service
+nodemon src/index.js
 ```
 
-That's all folks
+## Tech Stack
+
+- React
+- Apollo Client
+- GraphQL-Yoga
+- Prisma
+- RabbitMQ
+- Sequelize.js
+- PostgreSQL
+
+## Developers
+
+- Frederik Hermans (@h3dgy)
+- Iñigo Solano (@1334)
+- Maxim Sinelnikov (@Truroer)
+- Jovan Ratković (@ishootblanks)
